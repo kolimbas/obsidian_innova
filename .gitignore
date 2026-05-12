@@ -1,0 +1,13 @@
+# Obsidian — archivos personales que no se comparten
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.obsidian/graph.json
+
+# Papelera de Obsidian
+.trash/
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
