@@ -53,11 +53,13 @@ Cada cliente tiene un `CLIENT_ID` que conecta su sitio con su contenido en Supab
 
 ## Clientes
 
+→ Ver [[clientes/clientes|Clientes]] (hub con la cartera completa)
+
 | Cliente | Tipo | Estado | Fase |
 | --- | --- | --- | --- |
-| [[clientes/trujillo-abogados\|Estudio Trujillo Abogados]] | 🌐 Web | 🟡 En correcciones | 4 |
-| [[clientes/altius-nutrition\|ALTIUS NUTRITION]] | 🌐 Web | 🟡 En correcciones v2 | 4 |
-| [[clientes/blincer\|Blincer]] | ⚙️ Automatización | 🔵 Pre-venta | 0 |
+| Estudio Trujillo Abogados | 🌐 Web | 🟡 En correcciones | 4 |
+| ALTIUS NUTRITION | 🌐 Web | 🟡 En correcciones v2 | 4 |
+| Blincer | ⚙️ Automatización | 🔵 Pre-venta | 0 |
 
 ---
 
@@ -70,7 +72,7 @@ Cada cliente tiene un `CLIENT_ID` que conecta su sitio con su contenido en Supab
 > 4. **Supabase Stripe Sync Engine** → Activar en dashboard Supabase al próximo proyecto con cobros
 > 5. **Lovable Test/Live Environments** → Siempre trabajar en Test antes de tocar Live
 
-→ [[research/2026-05-10|10 mayo]] · [[research/2026-05-08|08 mayo]]
+→ Ver [[research/research-de-skills|Research de Skills]] (hub con todas las entradas semanales)
 
 ---
 
