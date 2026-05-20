@@ -55,6 +55,8 @@ Cada cliente tiene un `CLIENT_ID` que conecta su sitio con su contenido en Supab
 
 → Ver [[agentes/agentes|Agentes]] (hub de subagentes de Claude Code)
 
+📂 [Carpeta raíz en Drive: INNOVA_MASTER](https://drive.google.com/drive/folders/1UlR_MklVV0bMz0CjXTm6O8MDecTL4t4M)
+
 ---
 
 ## Clientes

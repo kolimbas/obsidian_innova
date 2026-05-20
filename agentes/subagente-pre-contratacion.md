@@ -3,8 +3,9 @@ tags:
   - innova
   - agente
   - pre-contratacion
-estado: implementado
+estado: activo
 updated: 2026-05-20
+cssclasses:
 ---
 
 # 🎙️ Subagente Pre-Contratación
@@ -17,7 +18,20 @@ updated: 2026-05-20
 
 ## Estado
 
-🛠️ **Implementado** — código en `~/Innova/`. Falta hacer el setup de Google Drive OAuth (una sola vez) y arrancar el servicio.
+✅ **Activo** — servicio `innova-watcher.service` corriendo, polling Drive cada 60s. Listo para procesar reuniones reales.
+
+---
+
+## 🔗 Recursos
+
+| Recurso                               | Ubicación                                                                                  |
+| ------------------------------------- | ------------------------------------------------------------------------------------------ |
+| 📂 Drive — INNOVA_MASTER              | [Abrir en Drive](https://drive.google.com/drive/folders/1UlR_MklVV0bMz0CjXTm6O8MDecTL4t4M) |
+| 📂 Drive — reuniones (drop de audios) | [Abrir en Drive](https://drive.google.com/drive/folders/1AGKCx0QzToF3o-nB04Qwkm7OKCOIfWiG) |
+| 💻 Código del pipeline                | `~/Innova/` (fuera del vault)                                                              |
+| 📋 README del pipeline                | `~/Innova/README.md`                                                                       |
+| 📜 Logs                               | `~/Innova/logs/watcher.log`                                                                |
+| ⚙️ Servicio                           | `systemctl --user status innova-watcher`                                                   |
 
 ---
 
@@ -25,7 +39,7 @@ updated: 2026-05-20
 
 ```
 Google Drive:
-  Innova/reuniones/<cliente>/<fecha>/
+  INNOVA_MASTER/reuniones/<cliente>/<fecha>/
       ├── audio1.m4a
       ├── audio2.m4a
       └── LISTO          ← marker que dispara el procesamiento
@@ -84,18 +98,35 @@ Google Drive:
 
 ---
 
-## Setup pendiente (una sola vez, manual)
+## Cómo usarlo (uso diario)
 
-> [!warning] Pasos que hace el usuario
-> 1. Crear proyecto en [Google Cloud Console](https://console.cloud.google.com) y habilitar **Google Drive API**.
-> 2. Crear credenciales OAuth 2.0 tipo "Desktop app". Bajar `credentials.json` a `~/Innova/credentials/`.
-> 3. Crear la carpeta `Innova/reuniones/` en su Google Drive (a mano).
-> 4. Anotar el **folder ID** de `Innova/reuniones/` (último segmento del URL).
-> 5. Correr `python ~/Innova/bin/drive_auth.py` — abre el navegador, autorizás, queda `token.json` guardado.
-> 6. Configurar `~/Innova/.env` con el folder ID raíz.
-> 7. `systemctl --user enable --now innova-watcher.service`.
->
-> Detalles paso a paso en `~/Innova/README.md`.
+1. Entrá a [INNOVA_MASTER/reuniones/](https://drive.google.com/drive/folders/1AGKCx0QzToF3o-nB04Qwkm7OKCOIfWiG) en Drive.
+2. Creá la carpeta del cliente si no existe: `<cliente>/`.
+3. Adentro creá la carpeta de la fecha: `<YYYY-MM-DD>/`.
+4. Subí todos los audios de la reunión.
+5. Cuando terminaste, creá un archivo vacío llamado **`LISTO`** en la carpeta de la fecha.
+6. Esperá 1-2 min. Va a aparecer `propuesta.docx` en la misma carpeta, y una nota en `clientes/reuniones/<cliente>-<fecha>.md` del vault.
+
+> Para ver el progreso en vivo: `tail -f ~/Innova/logs/watcher.log`.
+
+---
+
+## Setup ✅ Completado el 2026-05-20
+
+- [x] Proyecto Google Cloud creado (`scenic-scholar-496919-u1`)
+- [x] Drive API habilitada
+- [x] OAuth Desktop credentials → `~/Innova/credentials/credentials.json`
+- [x] `INNOVA_MASTER/reuniones/` creada en Drive (ID `1AGKCx0QzToF3o-nB04Qwkm7OKCOIfWiG`)
+- [x] `drive_auth.py` corrido → `token.json` guardado
+- [x] `.env` configurado
+- [x] `innova-watcher.service` instalado, **enabled** y **active (running)**
+
+### Pendientes operativos
+
+- [ ] `sudo loginctl enable-linger ventas4` — para que el servicio sobreviva al logout
+- [ ] Probar end-to-end con un audio real
+- [ ] Regenerar `client_secret` OAuth (el original quedó expuesto en chat el 2026-05-20)
+- [ ] Revocar PAT de GitHub que se usó para los primeros pushes
 
 ---
 
