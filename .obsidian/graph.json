@@ -1,0 +1,51 @@
+{
+  "collapse-filter": true,
+  "search": "",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "tag:#master",
+      "color": {
+        "a": 1,
+        "rgb": 14724139
+      }
+    },
+    {
+      "query": "tag:#hub",
+      "color": {
+        "a": 1,
+        "rgb": 1752220
+      }
+    },
+    {
+      "query": "tag:#template",
+      "color": {
+        "a": 1,
+        "rgb": 11894492
+      }
+    },
+    {
+      "query": "tag:#cliente OR tag:#research OR tag:#agente",
+      "color": {
+        "a": 1,
+        "rgb": 8313175
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": false,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1.4,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": true,
+  "centerStrength": 0.518713248970312,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 0.4444444444444444,
+  "close": true
+}
