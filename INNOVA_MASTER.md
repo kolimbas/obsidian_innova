@@ -51,6 +51,12 @@ Cada cliente tiene un `CLIENT_ID` que conecta su sitio con su contenido en Supab
 
 ---
 
+## Agentes
+
+→ Ver [[agentes/agentes|Agentes]] (hub de subagentes de Claude Code)
+
+---
+
 ## Clientes
 
 → Ver [[clientes/clientes|Clientes]] (hub con la cartera completa)
