@@ -18,15 +18,8 @@ updated: 2026-05-20
 
 | Agente | Función | Estado |
 | --- | --- | --- |
-| [[agentes/subagente-pre-contratacion\|Pre-Contratación]] | Transcribe audios de reuniones presenciales (iPhone) y genera propuesta en `.docx` con scope, mantenimiento, plazo y presupuesto | ✅ Spec cerrada |
+| [[agentes/subagente-pre-contratacion\|Pre-Contratación]] | Transcribe audios de reuniones presenciales (iPhone) cargados en Google Drive y genera propuesta en `.docx` con scope, mantenimiento, plazo y presupuesto | 🛠️ Implementado |
 | _Segundo agente_ | _Pendiente de definir_ | — |
-
----
-
-## Templates
-
-- 🌐 [[agentes/templates/template-propuesta-web]] — usado por Pre-Contratación para proyectos web
-- ⚙️ [[agentes/templates/template-propuesta-automatizacion]] — usado por Pre-Contratación para proyectos de automatización
 
 ---
 
