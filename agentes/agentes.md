@@ -16,10 +16,10 @@ updated: 2026-05-20
 
 ## Catálogo
 
-| Agente | Función | Estado |
-| --- | --- | --- |
+| Agente                                                   | Función                                                                                                                                                   | Estado   |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | [[agentes/subagente-pre-contratacion\|Pre-Contratación]] | Transcribe audios de reuniones presenciales (iPhone) cargados en Google Drive y genera propuesta en `.docx` con scope, mantenimiento, plazo y presupuesto | ✅ Activo |
-| _Segundo agente_ | _Pendiente de definir_ | — |
+| _Segundo agente_                                         | _Pendiente de definir_                                                                                                                                    | —        |
 
 ---
 
