@@ -23,7 +23,7 @@ updated: 2026-05-21
 
 ## Cuándo actúa
 
-El subagente corre como **servicio 24/7** (systemd, igual que [[agentes/subagente-pre-contratacion|Pre-Contratación]]). Cada ciclo (configurable, por defecto cada **15 minutos**) hace una pasada por todos los clientes registrados y procesa los incidentes que detecta.
+El subagente corre como **servicio 24/7** (systemd). Cada ciclo (configurable, por defecto cada **15 minutos**) hace una pasada por todos los clientes registrados y procesa los incidentes que detecta.
 
 No se invoca a mano. Es totalmente automático.
 
