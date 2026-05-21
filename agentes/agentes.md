@@ -19,7 +19,7 @@ updated: 2026-05-20
 | Agente                                                   | Función                                                                                                                                                   | Estado   |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | [[agentes/subagente-pre-contratacion\|Pre-Contratación]] | Transcribe audios de reuniones presenciales (iPhone) cargados en Google Drive y genera propuesta en `.docx` con scope, mantenimiento, plazo y presupuesto | ✅ Activo |
-| _Segundo agente_                                         | _Pendiente de definir_                                                                                                                                    | —        |
+| [[agentes/subagente-mantenimiento\|Mantenimiento]] | Monitorea los n8n de cada cliente, arregla solo lo que puede (retries, reauth, rewrites con snapshot+rollback) y avisa por mail al equipo cuando no puede | 🚧 Diseño cerrado |
 
 ---
 

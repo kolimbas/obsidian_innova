@@ -125,8 +125,8 @@ Google Drive:
 
 - [ ] `sudo loginctl enable-linger ventas4` — para que el servicio sobreviva al logout
 - [ ] Probar end-to-end con un audio real
-- [ ] Regenerar `client_secret` OAuth (el original quedó expuesto en chat el 2026-05-20)
-- [ ] Revocar PAT de GitHub que se usó para los primeros pushes
+- [x] Regenerar `client_secret` OAuth (el original quedó expuesto en chat el 2026-05-20)
+- [x] Revocar PAT de GitHub que se usó para los primeros pushes
 
 ---
 
