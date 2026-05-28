@@ -51,6 +51,12 @@ Cada cliente tiene un `CLIENT_ID` que conecta su sitio con su contenido en Supab
 
 ---
 
+## n8n Knowledge Base
+
+→ Ver [[n8n/README|n8n KB]] (base de conocimiento en inglés, Spec Kit por flujo, reuso entre clientes)
+
+---
+
 ## Agentes
 
 → Ver [[agentes/agentes|Agentes]] (hub de subagentes de Claude Code)
