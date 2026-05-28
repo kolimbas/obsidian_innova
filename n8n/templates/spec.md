@@ -1,7 +1,9 @@
 ---
 tags:
   - n8n
+  - template
   - spec
+  - nivel-3
 client: <client-slug>
 flow: <flow-slug>
 status: draft   # draft | planning | building | live | paused
@@ -12,7 +14,7 @@ updated: YYYY-MM-DD
 
 > One-sentence summary of the outcome this flow produces.
 
-← [[n8n/clients/<client-slug>/README|<client-slug>]] · [[n8n/METHODOLOGY|Methodology]]
+← Volver a [[n8n/METHODOLOGY|Methodology]]
 
 ---
 

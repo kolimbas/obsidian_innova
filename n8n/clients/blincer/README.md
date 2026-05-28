@@ -1,7 +1,8 @@
 ---
 tags:
   - n8n
-  - client
+  - cliente
+  - nivel-3
 client: blincer
 status: pre-sales
 updated: 2026-05-28
@@ -9,7 +10,7 @@ updated: 2026-05-28
 
 # Blincer — n8n Workspace
 
-> Lock factory (Argentina). Same owners as GAAB. Business context lives in [[clientes/blincer]] (Spanish).
+> Lock factory (Argentina). Same owners as GAAB. Business context lives in `clientes/blincer.md` (Spanish).
 
 ← [[n8n/clients/_index|Clients]]
 
@@ -17,7 +18,7 @@ updated: 2026-05-28
 
 ## Scope (current understanding)
 
-Automate Sandra's admin work (bank reconciliation, recurring invoicing, management report consolidation) and Guillermo's commercial workflows (order traceability, omnichannel inbox, stock alerts). See [[clientes/blincer]] for project phases and pricing model.
+Automate Sandra's admin work (bank reconciliation, recurring invoicing, management report consolidation) and Guillermo's commercial workflows (order traceability, omnichannel inbox, stock alerts). See `clientes/blincer.md` for project phases and pricing model.
 
 ## Stack
 
@@ -48,5 +49,5 @@ Automate Sandra's admin work (bank reconciliation, recurring invoicing, manageme
 
 ## Links
 
-- Business note: [[clientes/blincer]]
-- Pre-contract subagent: [[agentes/subagente-pre-contratacion]]
+- Business note: `clientes/blincer.md`
+- Pre-contract subagent: `agentes/subagente-pre-contratacion.md`

@@ -3,6 +3,7 @@ tags:
   - innova
   - cliente
   - activo
+  - nivel-2
 estado: en-correcciones
 fase: 4
 updated: 2026-05-10

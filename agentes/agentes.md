@@ -3,6 +3,7 @@ tags:
   - innova
   - agentes
   - hub
+  - nivel-1
 updated: 2026-05-20
 ---
 
@@ -20,7 +21,7 @@ updated: 2026-05-20
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | [[agentes/subagente-pre-contratacion\|Pre-Contratación]] | Transcribe audios de reuniones presenciales (iPhone) cargados en Google Drive y genera propuesta en `.docx` con scope, mantenimiento, plazo y presupuesto | ✅ Activo |
 | [[agentes/subagente-mantenimiento\|Mantenimiento]] | Monitorea los n8n de cada cliente, arregla solo lo que puede (retries, reauth, rewrites con snapshot+rollback) y avisa por mail al equipo cuando no puede | 🚧 Diseño cerrado |
-| [[agentes/subagente-n8n-flow-builder\|n8n Flow Builder]] | Toma un requisito y construye el workflow en n8n siguiendo Spec Kit (spec → research → plan → tasks → build → retro). Reusa flujos previos y deja todo documentado en [[n8n/README\|n8n KB]] | ✅ Activo |
+| [[agentes/subagente-n8n-flow-builder\|n8n Flow Builder]] | Toma un requisito y construye el workflow en n8n siguiendo Spec Kit (spec → research → plan → tasks → build → retro). Reusa flujos previos y deja todo documentado en la n8n KB | ✅ Activo |
 
 ---
 

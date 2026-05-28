@@ -8,28 +8,28 @@
   "collapse-color-groups": false,
   "colorGroups": [
     {
-      "query": "tag:#master",
+      "query": "tag:#nivel-0",
       "color": {
         "a": 1,
         "rgb": 14724139
       }
     },
     {
-      "query": "tag:#hub",
+      "query": "tag:#nivel-1",
       "color": {
         "a": 1,
         "rgb": 1752220
       }
     },
     {
-      "query": "tag:#template",
+      "query": "tag:#nivel-2",
       "color": {
         "a": 1,
         "rgb": 11894492
       }
     },
     {
-      "query": "tag:#cliente OR tag:#research OR tag:#agente",
+      "query": "tag:#nivel-3",
       "color": {
         "a": 1,
         "rgb": 8313175
@@ -46,6 +46,6 @@
   "repelStrength": 11.1181640625,
   "linkStrength": 1,
   "linkDistance": 245,
-  "scale": 0.19753086419753077,
-  "close": false
+  "scale": 0.19753086419753055,
+  "close": true
 }

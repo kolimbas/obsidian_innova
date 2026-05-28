@@ -4,6 +4,7 @@ tags:
   - agente
   - n8n
   - flow-builder
+  - nivel-2
 estado: activo
 updated: 2026-05-28
 ---
@@ -18,7 +19,7 @@ updated: 2026-05-28
 
 ## Estado
 
-✅ **Activo** — la base de conocimiento vive en [[n8n/README|n8n KB]].
+✅ **Activo** — la base de conocimiento vive en `n8n/` (n8n KB).
 
 ---
 
@@ -47,7 +48,7 @@ No se invoca para tocar flujos ya existentes salvo que el usuario explícitament
 | Validate | Validaciones pasadas y ejecución de prueba OK | `mcp__n8n__validate_node`, `mcp__n8n__n8n_validate_workflow`, `mcp__n8n__n8n_test_workflow` |
 | Retro | `retro.md` + bits promovidos a `patterns/` o `nodes/` + línea en `lessons-learned.md` | — |
 
-Detalle: [[n8n/METHODOLOGY|METHODOLOGY]].
+Detalle: `n8n/METHODOLOGY.md`.
 
 ---
 
@@ -85,8 +86,8 @@ Y como mínimo una entrada en `n8n/lessons-learned.md`.
 
 ## Interacción con otros agentes
 
-- **[[agentes/subagente-pre-contratacion|Pre-Contratación]]**: cuando una propuesta menciona flujos n8n concretos, este agente los toma como input inicial para el `spec.md`.
-- **[[agentes/subagente-mantenimiento|Mantenimiento]]**: consume los `workflow.json` versionados y los `plan.md` para entender qué workflow está corriendo y por qué.
+- **Pre-Contratación**: cuando una propuesta menciona flujos n8n concretos, este agente los toma como input inicial para el `spec.md`.
+- **Mantenimiento**: consume los `workflow.json` versionados y los `plan.md` para entender qué workflow está corriendo y por qué.
 
 ---
 

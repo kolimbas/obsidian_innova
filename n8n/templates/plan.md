@@ -1,7 +1,9 @@
 ---
 tags:
   - n8n
+  - template
   - plan
+  - nivel-3
 client: <client-slug>
 flow: <flow-slug>
 updated: YYYY-MM-DD
@@ -9,7 +11,7 @@ updated: YYYY-MM-DD
 
 # Plan — <Flow Title>
 
-← [[spec|Spec]] · [[research|Research]] · [[tasks|Tasks]]
+← Volver a [[n8n/METHODOLOGY|Methodology]]
 
 > Node-level architecture. Keep this in sync with what's actually built.
 

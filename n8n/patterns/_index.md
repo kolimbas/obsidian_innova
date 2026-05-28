@@ -2,7 +2,7 @@
 tags:
   - n8n
   - patterns
-  - hub
+  - nivel-2
 updated: 2026-05-28
 ---
 

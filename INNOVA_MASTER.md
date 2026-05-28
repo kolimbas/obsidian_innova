@@ -2,6 +2,7 @@
 tags:
   - innova
   - master
+  - nivel-0
 updated: 2026-05-10
 ---
 
@@ -87,6 +88,12 @@ Cada cliente tiene un `CLIENT_ID` que conecta su sitio con su contenido en Supab
 > 5. **Lovable Test/Live Environments** → Siempre trabajar en Test antes de tocar Live
 
 → Ver [[research/research-de-skills|Research de Skills]] (hub con todas las entradas semanales)
+
+---
+
+## Workflows operativos
+
+→ Ver [[workflows/workflows|Workflows]] (procesos repetibles: onboarding, etc.)
 
 ---
 

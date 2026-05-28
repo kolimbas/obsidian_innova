@@ -3,6 +3,7 @@ tags:
   - n8n
   - methodology
   - spec-kit
+  - nivel-2
 updated: 2026-05-28
 ---
 
@@ -24,7 +25,7 @@ updated: 2026-05-28
 | `tasks.md` | **What are the concrete steps?** Ordered checklist with validation points. | Together with the plan. |
 | `retro.md` | **What did we learn?** Surprises, reusable bits to promote, gotchas, time spent. | After the flow is live. |
 
-The templates live in [[n8n/templates/spec|templates/]].
+The templates live in `n8n/templates/`: [[n8n/templates/spec|spec]] · [[n8n/templates/research|research]] · [[n8n/templates/plan|plan]] · [[n8n/templates/tasks|tasks]] · [[n8n/templates/retro|retro]].
 
 ---
 
@@ -57,7 +58,7 @@ Stop here and confirm with the user if any open question is load-bearing.
 This is the **reuse step**. Always run, in this order:
 
 1. **Past flows of the same client** — read every `spec.md` and `retro.md` under the client folder.
-2. **Cross-client patterns** — scan [[n8n/patterns/_index|patterns]] and other clients' flow folders for similar shapes (same trigger type, same target system, same data flow).
+2. **Cross-client patterns** — scan `n8n/patterns/` and other clients' flow folders for similar shapes (same trigger type, same target system, same data flow).
 3. **n8n node docs / templates** — use the n8n MCP:
    - `mcp__n8n__search_nodes` to find candidate nodes
    - `mcp__n8n__get_node` for properties
@@ -113,7 +114,7 @@ Mandatory before closing. Sections:
 - **Time spent** vs estimate
 - **Open follow-ups**
 
-Add a one-liner to [[n8n/lessons-learned|lessons-learned.md]].
+Add a one-liner to `n8n/lessons-learned.md`.
 
 ---
 

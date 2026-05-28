@@ -3,6 +3,7 @@ tags:
   - cliente
   - automatizacion
   - activo
+  - nivel-2
 estado: pre-venta
 fase: 0
 updated: 2026-05-11

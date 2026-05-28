@@ -2,6 +2,7 @@
 tags:
   - n8n
   - lessons-learned
+  - nivel-2
 updated: 2026-05-28
 ---
 
@@ -27,4 +28,4 @@ At the end of every `retro.md`:
 
 1. Pick the single most surprising or reusable insight.
 2. Append a row above with the date, a link to the retro, and the takeaway in one sentence.
-3. If the insight is generic, also promote it to [[n8n/patterns/_index|patterns]] or [[n8n/nodes/_index|nodes]].
+3. If the insight is generic, also promote it to `n8n/patterns/` or `n8n/nodes/`.

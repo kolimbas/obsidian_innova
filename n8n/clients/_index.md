@@ -2,7 +2,7 @@
 tags:
   - n8n
   - clients
-  - hub
+  - nivel-2
 updated: 2026-05-28
 ---
 
@@ -20,7 +20,7 @@ updated: 2026-05-28
 | --- | --- | --- | --- |
 | [[n8n/clients/blincer/README\|Blincer]] | pre-sales | 0 | Lock factory; automation roadmap, Tango integration TBD |
 
-> Mirror of the broader client list lives in [[clientes/clientes]] (Spanish, business context). This index only tracks clients that have or will have n8n work.
+> Mirror of the broader client list lives in `clientes/clientes.md` (Spanish, business context). This index only tracks clients that have or will have n8n work.
 
 ---
 

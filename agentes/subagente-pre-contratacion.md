@@ -3,6 +3,7 @@ tags:
   - innova
   - agente
   - pre-contratacion
+  - nivel-2
 estado: activo
 updated: 2026-05-20
 cssclasses:

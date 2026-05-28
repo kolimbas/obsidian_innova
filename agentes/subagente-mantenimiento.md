@@ -3,6 +3,7 @@ tags:
   - innova
   - agente
   - mantenimiento
+  - nivel-2
 estado: diseño
 updated: 2026-05-21
 ---

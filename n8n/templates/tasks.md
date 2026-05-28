@@ -1,7 +1,9 @@
 ---
 tags:
   - n8n
+  - template
   - tasks
+  - nivel-3
 client: <client-slug>
 flow: <flow-slug>
 updated: YYYY-MM-DD
@@ -9,7 +11,7 @@ updated: YYYY-MM-DD
 
 # Tasks — <Flow Title>
 
-← [[spec|Spec]] · [[plan|Plan]]
+← Volver a [[n8n/METHODOLOGY|Methodology]]
 
 > Ordered, verifiable. Update as work progresses; do not delete completed items.
 

@@ -4,6 +4,7 @@ tags:
   - template
   - propuesta
   - automatizacion
+  - nivel-3
 updated: 2026-05-20
 ---
 

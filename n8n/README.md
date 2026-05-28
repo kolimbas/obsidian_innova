@@ -3,6 +3,7 @@ tags:
   - n8n
   - hub
   - knowledge-base
+  - nivel-1
 updated: 2026-05-28
 ---
 
@@ -68,7 +69,7 @@ n8n/
 | Find a similar past flow | [[n8n/clients/_index|Clients]] or [[n8n/patterns/_index|Patterns]] |
 | Recall a node gotcha | [[n8n/nodes/_index|Nodes]] |
 | Read accumulated learnings | [[n8n/lessons-learned|Lessons Learned]] |
-| Understand the agent that runs this | [[agentes/subagente-n8n-flow-builder|n8n-flow-builder subagent]] |
+| Understand the agent that runs this | `agentes/subagente-n8n-flow-builder.md` |
 
 ---
 

@@ -1,7 +1,9 @@
 ---
 tags:
   - n8n
+  - template
   - retro
+  - nivel-3
 client: <client-slug>
 flow: <flow-slug>
 updated: YYYY-MM-DD
@@ -9,7 +11,7 @@ updated: YYYY-MM-DD
 
 # Retro — <Flow Title>
 
-← [[spec|Spec]] · [[plan|Plan]]
+← Volver a [[n8n/METHODOLOGY|Methodology]]
 
 > Mandatory. This is where the KB compounds.
 
@@ -43,7 +45,7 @@ updated: YYYY-MM-DD
 
 ## Node gotchas
 
-- <Node>: <quirk> → captured in [[n8n/nodes/_index|nodes]]
+- <Node>: <quirk> → captured in `n8n/nodes/`
 
 ## Time
 
@@ -57,4 +59,4 @@ updated: YYYY-MM-DD
 
 ## One-liner for lessons-learned
 
-> Append the most surprising / reusable insight (one sentence) to [[n8n/lessons-learned|lessons-learned.md]].
+> Append the most surprising / reusable insight (one sentence) to `n8n/lessons-learned.md`.

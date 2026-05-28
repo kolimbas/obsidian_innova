@@ -1,7 +1,9 @@
 ---
 tags:
   - n8n
+  - template
   - research
+  - nivel-3
 client: <client-slug>
 flow: <flow-slug>
 updated: YYYY-MM-DD
@@ -9,7 +11,7 @@ updated: YYYY-MM-DD
 
 # Research — <Flow Title>
 
-← [[spec|Spec]] · [[n8n/METHODOLOGY|Methodology]]
+← Volver a [[n8n/METHODOLOGY|Methodology]]
 
 > Always run, even if the answer is "nothing relevant." The point is to make reuse the default.
 
@@ -35,7 +37,7 @@ Folders scanned: `n8n/patterns/`, other `n8n/clients/*/flows/`.
 
 Use `mcp__n8n__search_nodes`, `mcp__n8n__get_node`, `mcp__n8n__search_templates`.
 
-| Node | Role | Key params | Gotchas / link to [[n8n/nodes/_index|nodes]] |
+| Node | Role | Key params | Gotchas / link to `n8n/nodes/` |
 | --- | --- | --- | --- |
 |  |  |  |  |
 
