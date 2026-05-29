@@ -5,7 +5,7 @@ tags:
   - nivel-3
 client: blincer
 status: pre-sales
-updated: 2026-05-28
+updated: 2026-05-29
 ---
 
 # Blincer — n8n Workspace
@@ -20,14 +20,18 @@ updated: 2026-05-28
 
 Automate Sandra's admin work (bank reconciliation, recurring invoicing, management report consolidation) and Guillermo's commercial workflows (order traceability, omnichannel inbox, stock alerts). See `clientes/blincer.md` for project phases and pricing model.
 
+**Canonical stack confirmado por el cliente (2026-05-29):** Tango (ERP) + HubSpot (CRM / comercial). Bancos, Google Workspace y herramientas de marketing del roadmap original se conservan como periféricos.
+
 ## Stack
 
 | System | Use | Integration risk |
 | --- | --- | --- |
-| Tango Gestión (version TBC) | ERP | **High** if local-only (no API) → CSV / RPA |
+| **HubSpot (Pro+)** | CRM, Deals, Marketing Email, Workflows API | Native node + REST · webhooks habilitados |
+| Tango Gestión (version TBC) | ERP, facturación, cuenta corriente | **High** if local-only (no API) → CSV / RPA |
 | Galicia · BBVA · Cooperativa | Banking | Usually scrape or CSV import |
 | Gmail · Google Drive · Google Sheets | Docs / ops | Native n8n nodes |
-| Mailchimp · Metricool · Google Ads | Marketing | Native nodes / REST |
+| Mailchimp · Metricool · Google Ads | Marketing (legacy — evaluar reemplazo por HubSpot Marketing) | Native nodes / REST |
+| WhatsApp (provider TBC) | Canal cliente final + cobranzas | Evolution API vs Cloud API oficial |
 
 ## Credentials policy
 
@@ -39,15 +43,26 @@ Automate Sandra's admin work (bank reconciliation, recurring invoicing, manageme
 
 | Flow | Status | Trigger | Last update |
 | --- | --- | --- | --- |
-| _none yet_ |  |  |  |
+| [[n8n/clients/blincer/flows/credit-limit-invoice-block/spec\|Bloqueo facturación por deuda]] | draft | HubSpot Deal stage change | 2026-05-29 |
+| [[n8n/clients/blincer/flows/whatsapp-overdue-debt-reminder/spec\|Avisos deuda vencida WhatsApp]] | draft | Cron diario 09:00 ART | 2026-05-29 |
+| [[n8n/clients/blincer/flows/sales-bot-with-quotes/spec\|Bot ventas + cotizaciones/facturas]] | draft | WhatsApp inbound webhook | 2026-05-29 |
+| [[n8n/clients/blincer/flows/email-remarketing/spec\|Remarketing y difusiones email]] | draft | Manual HubSpot + cron nurturing | 2026-05-29 |
 
 ## Open dependencies
 
-- [ ] Confirm Tango version (local vs Nexo)
+- [ ] Confirm Tango version (local vs Nexo) — bloquea plan de 3 flows
+- [ ] Confirm WhatsApp provider final (Evolution API vs Cloud API oficial) — bloquea plan de 2 flows
+- [ ] Confirm HubSpot edition exacto + scopes API disponibles
+- [ ] Decidir LLM provider y budget para sales-bot
+- [ ] Decidir HubSpot Marketing vs Mailchimp para email-remarketing
+- [ ] Source of truth del catálogo + stock para sales-bot
+- [ ] Política de aprobación humana antes de emitir cotización/factura
+- [ ] Canal de alerta interno (Sandra/Guillermo) — WhatsApp interno, email o Slack/Teams
 - [ ] Get list of accesses / credentials from client
 - [ ] Decide secrets vault
 
 ## Links
 
+- [[n8n/clients/blincer/discovery-2026-05-29|Cuestionario de discovery — tanda 2026-05-29]] (para mandarle a Sandra/Guillermo/IT)
 - Business note: `clientes/blincer.md`
 - Pre-contract subagent: `agentes/subagente-pre-contratacion.md`

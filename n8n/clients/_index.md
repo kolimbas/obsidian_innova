@@ -3,7 +3,7 @@ tags:
   - n8n
   - clients
   - nivel-2
-updated: 2026-05-28
+updated: 2026-05-29
 ---
 
 # Clients — n8n Flows
@@ -18,7 +18,8 @@ updated: 2026-05-28
 
 | Client | Status | # of flows | Notes |
 | --- | --- | --- | --- |
-| [[n8n/clients/blincer/README\|Blincer]] | pre-sales | 0 | Lock factory; automation roadmap, Tango integration TBD |
+| [[n8n/clients/blincer/README\|Blincer]] | pre-sales | 4 | Lock factory · stack Tango + HubSpot · 4 bundles draft (2026-05-29) |
+| [[n8n/clients/gaab/README\|GAAB]] | pre-info | 0 | Lockfactory hermana de Blincer · esperando detalle de Productos estancados de Gabriel |
 
 > Mirror of the broader client list lives in `clientes/clientes.md` (Spanish, business context). This index only tracks clients that have or will have n8n work.
 

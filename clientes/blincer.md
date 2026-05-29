@@ -53,6 +53,15 @@ Sandra se jubila este año — hay que capturar su conocimiento y automatizar su
 
 ## Áreas y proyectos
 
+> [!info] Tanda oficial 2026-05-29 — 5 flujos confirmados por el cliente
+> El cliente bajó alcance concreto sobre Tango + HubSpot. Specs en `n8n/clients/blincer/flows/`:
+> 1. [[n8n/clients/blincer/flows/credit-limit-invoice-block/spec|Bloqueo de facturación por deuda]]
+> 2. [[n8n/clients/blincer/flows/whatsapp-overdue-debt-reminder/spec|Avisos de deuda vencida por WhatsApp]]
+> 3. [[n8n/clients/blincer/flows/sales-bot-with-quotes/spec|Bot de ventas + cotizaciones/facturas]] (acopla flujos 3 y 4 de la tanda)
+> 4. [[n8n/clients/blincer/flows/email-remarketing/spec|Remarketing y difusiones email]]
+>
+> Estos 5 ítems no reemplazan el roadmap original de Sandra/Guillermo (más abajo) — son la primera tanda en producción.
+
 ### Área Sandra — Administración
 
 > [!tip] Quick wins (mayor impacto, arrancar por acá)
