@@ -1,0 +1,16 @@
+{
+  "_note": "Filas mock para las Sheets cobranzas_config y cobranzas_templates, usadas por los nodos Read config / Read templates al testear.",
+  "cobranzas_config": {
+    "cadence_days": "[1,7,15,30,45,60]",
+    "business_hours_window": "09:00-18:00 ART",
+    "excluded_customers": "[\"C-EXCL-01\"]"
+  },
+  "cobranzas_templates": [
+    { "cadence_day": 1, "message": "Hola {{nombre}}, te recordamos la factura {{invoice_id}} por {{currency}} {{amount_due}} vencida el {{due_date}}." },
+    { "cadence_day": 7, "message": "Hola {{nombre}}, la factura {{invoice_id}} lleva {{days_overdue}} días vencida ({{currency}} {{amount_due}}). ¿Coordinamos el pago?" },
+    { "cadence_day": 15, "message": "{{nombre}}, seguimos sin registrar el pago de {{invoice_id}} ({{currency}} {{amount_due}}), {{days_overdue}} días de atraso." },
+    { "cadence_day": 30, "message": "{{nombre}}, la factura {{invoice_id}} tiene {{days_overdue}} días de mora. Por favor contactanos." },
+    { "cadence_day": 45, "message": "{{nombre}}, recordatorio: {{invoice_id}} ({{currency}} {{amount_due}}) sigue impaga, {{days_overdue}} días." },
+    { "cadence_day": 60, "message": "{{nombre}}, último aviso automático por {{invoice_id}} ({{currency}} {{amount_due}}), {{days_overdue}} días de atraso." }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "_case": "pide cantidad > stock → check_stock devuelve insuficiente → el bot ofrece alternativa / handoff",
+  "event": "messages.upsert",
+  "instance": "blincer",
+  "data": {
+    "key": { "remoteJid": "5491155558888@s.whatsapp.net", "fromMe": false, "id": "MSG-0006" },
+    "message": { "conversation": "Necesito 100000 cerraduras modelo X para mañana" },
+    "messageTimestamp": 1748528900
+  }
+}

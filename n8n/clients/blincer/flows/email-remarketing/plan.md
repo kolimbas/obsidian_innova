@@ -16,6 +16,9 @@ status: blocked-by-oqs
 
 > ⚠️ **BLOQUEADO** — pendiente OQ-1 (HubSpot Marketing vs Mailchimp) principalmente. Asumimos **HubSpot Marketing Hub** para diseñar (ya tienen HubSpot Pro+; sumar Marketing es menos infra y elimina la sincronización con Mailchimp). Si se elige Mailchimp, el plan cambia básicamente en el nodo de send.
 
+> [!note] Build 2026-05-31 — skeleton importable
+> `workflow.json` con el flow principal + las 3 cadenas cron secundarias (analytics, suppression sweep, queue flush) en el mismo archivo (separar en workflows propios en prod). Nodos **disabled**: `Send via platform` y `Get platform analytics` (OQ-1 HubSpot Marketing vs Mailchimp), `Notify Guillermo` y `Send 48h summary` (OQ-G7/OQ-7). Dry-run gate activo por default. `active: false`.
+
 ---
 
 ## Architecture

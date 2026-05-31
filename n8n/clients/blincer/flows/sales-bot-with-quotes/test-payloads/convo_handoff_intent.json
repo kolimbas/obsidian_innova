@@ -1,0 +1,10 @@
+{
+  "_case": "dice 'quiero hablar con una persona' → handoff_human por intent",
+  "event": "messages.upsert",
+  "instance": "blincer",
+  "data": {
+    "key": { "remoteJid": "5491155557777@s.whatsapp.net", "fromMe": false, "id": "MSG-0004" },
+    "message": { "conversation": "No me sirve el bot, quiero hablar con una persona" },
+    "messageTimestamp": 1748528700
+  }
+}

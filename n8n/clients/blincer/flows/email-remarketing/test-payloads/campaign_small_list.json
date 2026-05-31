@@ -1,0 +1,9 @@
+{
+  "_case": "campaña real a lista chica (3 contacts internos) → 3 sends, 0 queue, log completo",
+  "_note": "Usar la lista __test_marketing__ (Guillermo, Sandra, Innova).",
+  "campaign_id": "Q2-2026-test-marketing",
+  "triggered_by_user": "guillermo@blincer.com",
+  "list_id": "REPLACE_TEST_LIST_ID",
+  "mode": "send",
+  "scheduled_for": null
+}

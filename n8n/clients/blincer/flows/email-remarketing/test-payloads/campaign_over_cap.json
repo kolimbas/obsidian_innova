@@ -1,0 +1,9 @@
+{
+  "_case": "lista grande > daily_cap → split correcto entre send_now y queue_for_tomorrow",
+  "_note": "Setear daily_cap bajo (ej. 2) en campaigns_config para forzar overflow con pocos contacts.",
+  "campaign_id": "Q2-2026-blast-grande",
+  "triggered_by_user": "guillermo@blincer.com",
+  "list_id": "REPLACE_BIG_LIST_ID",
+  "mode": "send",
+  "scheduled_for": null
+}

@@ -1,0 +1,10 @@
+{
+  "_case": "pide cotización, confirma compra (camino feliz)",
+  "event": "messages.upsert",
+  "instance": "blincer",
+  "data": {
+    "key": { "remoteJid": "5491155556666@s.whatsapp.net", "fromMe": false, "id": "MSG-0001" },
+    "message": { "conversation": "Hola, necesito 50 cerraduras modelo X, ¿me pasás precio?" },
+    "messageTimestamp": 1748528400
+  }
+}

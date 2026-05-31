@@ -43,10 +43,13 @@ Automate Sandra's admin work (bank reconciliation, recurring invoicing, manageme
 
 | Flow | Status | Trigger | Last update |
 | --- | --- | --- | --- |
-| [[n8n/clients/blincer/flows/credit-limit-invoice-block/spec\|Bloqueo facturación por deuda]] | draft | HubSpot Deal stage change | 2026-05-29 |
-| [[n8n/clients/blincer/flows/whatsapp-overdue-debt-reminder/spec\|Avisos deuda vencida WhatsApp]] | draft | Cron diario 09:00 ART | 2026-05-29 |
-| [[n8n/clients/blincer/flows/sales-bot-with-quotes/spec\|Bot ventas + cotizaciones/facturas]] | draft | WhatsApp inbound webhook | 2026-05-29 |
-| [[n8n/clients/blincer/flows/email-remarketing/spec\|Remarketing y difusiones email]] | draft | Manual HubSpot + cron nurturing | 2026-05-29 |
+| [[n8n/clients/blincer/flows/credit-limit-invoice-block/spec\|Bloqueo facturación por deuda]] | skeleton built (OQ nodes disabled) | HubSpot Deal stage change | 2026-05-31 |
+| [[n8n/clients/blincer/flows/whatsapp-overdue-debt-reminder/spec\|Avisos deuda vencida WhatsApp]] | skeleton built (OQ nodes disabled) | Cron diario 09:00 ART | 2026-05-31 |
+| [[n8n/clients/blincer/flows/sales-bot-with-quotes/spec\|Bot ventas + cotizaciones/facturas]] | skeleton built (OQ nodes disabled) | WhatsApp inbound webhook | 2026-05-31 |
+| [[n8n/clients/blincer/flows/email-remarketing/spec\|Remarketing y difusiones email]] | skeleton built (OQ nodes disabled) | Manual HubSpot + cron nurturing | 2026-05-31 |
+
+> [!note] Build status 2026-05-31 — importable skeletons
+> Cada flow tiene un `workflow.json` importable en n8n (Import from File). Construidos a mano desde los `plan.md` (el MCP de n8n no estaba conectado). Los nodos que dependen de open questions quedan **`disabled: true`** (Tango, provider WhatsApp, LLM, canal de alerta interno OQ-G7, plataforma de email). Todos los workflows están `active: false`. Antes de activar: mapear credenciales (`hubspot-blincer-main`, `gsheets-blincer-ops`, etc.), reemplazar los placeholders `REPLACE_*`, resolver las OQs y habilitar los nodos correspondientes.
 
 ## Open dependencies
 

@@ -1,0 +1,56 @@
+[
+  {
+    "_case": "days_overdue=7 y template configurado → mensaje sent",
+    "invoice_id": "FC-A-00012345",
+    "tango_customer_id": "C-9421",
+    "contact_name": "Distribuidora Norte",
+    "amount_due": 187540.5,
+    "currency": "ARS",
+    "due_date": "2026-05-24"
+  },
+  {
+    "_case": "days_overdue=5 (no en cadence [1,7,15,30,45,60]) → ignorada",
+    "invoice_id": "FC-A-00012346",
+    "tango_customer_id": "C-9500",
+    "contact_name": "Ferretería Sur",
+    "amount_due": 42000,
+    "currency": "ARS",
+    "due_date": "2026-05-26"
+  },
+  {
+    "_case": "cliente sin WhatsApp → fallback Sheet (sin envío)",
+    "invoice_id": "FC-A-00012347",
+    "tango_customer_id": "C-9600",
+    "contact_name": "Cliente Sin Tel",
+    "amount_due": 99000,
+    "currency": "ARS",
+    "due_date": "2026-05-16"
+  },
+  {
+    "_case": "cliente en excluded_customers → ignorado",
+    "invoice_id": "FC-A-00012348",
+    "tango_customer_id": "C-EXCL-01",
+    "contact_name": "Cliente Litigio",
+    "amount_due": 250000,
+    "currency": "ARS",
+    "due_date": "2026-05-16"
+  },
+  {
+    "_case": "saldo=0 en re-validate (pagó entre fetch y send) → skip 'ya pagó'",
+    "invoice_id": "FC-A-00012349",
+    "tango_customer_id": "C-9700",
+    "contact_name": "Pagó Recién",
+    "amount_due": 0,
+    "currency": "ARS",
+    "due_date": "2026-05-16"
+  },
+  {
+    "_case": "factura USD → template debe reflejar moneda (OQ-7)",
+    "invoice_id": "FC-A-00012350",
+    "tango_customer_id": "C-9800",
+    "contact_name": "Export Cliente",
+    "amount_due": 1500,
+    "currency": "USD",
+    "due_date": "2026-05-01"
+  }
+]

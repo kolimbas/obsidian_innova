@@ -16,6 +16,9 @@ status: blocked-by-oqs
 
 > ⚠️ **BLOQUEADO** — más OQs abiertas que cualquier otro flow (9 locales + 3 globales). Plan asume: Anthropic Claude (Haiku 4.5 default + escalación a Sonnet 4.6 para cotizaciones), WhatsApp Cloud API, Tango Nexo, catálogo en HubSpot Products + check stock just-in-time en Tango, política C (cotización auto + review de factura), Postgres para conversaciones. Re-validar después de cerrar OQs.
 
+> [!note] Build 2026-05-31 — skeleton importable
+> `workflow.json` construido a mano (skeleton del workflow principal). Nodos **disabled**: Postgres (`Dedup`, `Session lookup`, `Save turn` — OQ-8), `Call LLM` (OQ-1), `check_stock`/`emit_invoice` Tango (OQ-3/OQ-G1), `create_quote` (Gotenberg+Drive), `Send WhatsApp reply` (OQ-2/OQ-G2), `Handoff internal alert` (OQ-G7). `create_quote` y `emit_invoice` quedan como NoOp placeholder → convertir en sub-workflows (Execute Workflow) cuando cierren las OQs. `active: false`.
+
 ---
 
 ## Architecture

@@ -1,0 +1,18 @@
+{
+  "_case": "company sin tango_customer_id → Validate mapping = false → Error branch (no mapping)",
+  "subscriptionType": "deal.propertyChange",
+  "objectId": 38501094823,
+  "propertyName": "dealstage",
+  "propertyValue": "REPLACE_STAGE_ID_listo_para_facturar",
+  "occurredAt": 1748528600000,
+  "sourceId": "portal-99999999",
+  "portalId": 99999999,
+  "_mock_resolved": {
+    "deal_amount": 90000,
+    "company": {
+      "tango_customer_id": "",
+      "credit_limit_ars": 500000
+    },
+    "current_debt": null
+  }
+}

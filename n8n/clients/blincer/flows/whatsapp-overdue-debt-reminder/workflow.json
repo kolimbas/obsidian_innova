@@ -1,0 +1,314 @@
+{
+  "name": "Blincer — WhatsApp Overdue Debt Reminder",
+  "active": false,
+  "settings": {
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## WhatsApp Overdue Debt Reminder\nDISABLED nodes wait on Open Questions:\n- **Fetch overdue invoices (Tango)** → OQ-4 / OQ-G1 (Tango source).\n- **Re-validate balance (Tango)** → same.\n- **Send WhatsApp** → OQ-1/OQ-G2 (provider) + OQ-2 (opt-in). Do NOT enable until written opt-in is confirmed.\n\nDisabled nodes pass data through, so cadence/idempotency/logging can be tested with mock invoice rows. Set workflow timezone = America/Argentina/Buenos_Aires (already set).",
+        "height": 340,
+        "width": 400,
+        "color": 4
+      },
+      "id": "sticky-doc",
+      "name": "Build notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-60, 40]
+    },
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 9 * * *" }] }
+      },
+      "id": "cron-0900",
+      "name": "Cron 09:00 ART",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "cobranzas_config", "mode": "name" },
+        "options": {}
+      },
+      "id": "read-config",
+      "name": "Read config",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [440, 320],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "cobranzas_templates", "mode": "name" },
+        "options": {}
+      },
+      "id": "read-templates",
+      "name": "Read templates",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [640, 320],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://REPLACE_TANGO_BASE/facturas?estado=vencidas&saldo_gt=0",
+        "authentication": "genericCredentialType",
+        "options": { "timeout": 15000 }
+      },
+      "id": "fetch-overdue",
+      "name": "Fetch overdue invoices (Tango)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [840, 320],
+      "disabled": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-4/OQ-G1: Tango source undefined (Nexo REST vs local CSV)."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep invoices whose days_overdue matches a configured cadence day.\nconst cadence = JSON.parse(($('Read config').first().json.cadence_days) || '[1,7,15,30,45,60]');\nconst today = new Date();\nconst out = [];\nfor (const item of $input.all()) {\n  const inv = item.json;\n  const due = new Date(inv.due_date);\n  const daysOverdue = Math.floor((today - due) / 86400000);\n  if (cadence.includes(daysOverdue)) {\n    out.push({ json: { ...inv, days_overdue: daysOverdue, matches_cadence_day: daysOverdue } });\n  }\n}\nreturn out;"
+      },
+      "id": "compute-cadence",
+      "name": "Compute cadence match",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1040, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Drop customers on the exclusion list.\nlet excluded = [];\ntry { excluded = JSON.parse($('Read config').first().json.excluded_customers || '[]'); } catch (e) {}\nreturn $input.all().filter(i => !excluded.includes(i.json.tango_customer_id));"
+      },
+      "id": "exclude-customers",
+      "name": "Exclude listed customers",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1240, 320]
+    },
+    {
+      "parameters": { "batchSize": 10, "options": {} },
+      "id": "split-batches",
+      "name": "Split in batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1440, 320]
+    },
+    {
+      "parameters": {
+        "operation": "lookup",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "cobranzas_log", "mode": "name" },
+        "lookupColumn": "dedup_key",
+        "lookupValue": "={{ $json.invoice_id }}-{{ $json.matches_cadence_day }}-{{ $now.format('yyyy-LL-dd') }}",
+        "options": {}
+      },
+      "id": "idempotency-lookup",
+      "name": "Idempotency lookup",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1660, 320],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "search",
+        "filterGroupsUi": {
+          "filterGroupsValues": [
+            {
+              "filtersUi": {
+                "filterValues": [
+                  { "propertyName": "tango_customer_id", "operator": "EQ", "value": "={{ $json.tango_customer_id }}" }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "id": "get-contact",
+      "name": "Get Contact",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [1860, 320],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c-wa",
+              "leftValue": "={{ $json.properties?.phone }}",
+              "rightValue": "^\\+?[1-9]\\d{7,14}$",
+              "operator": { "type": "string", "operation": "regex" }
+            }
+          ]
+        }
+      },
+      "id": "has-whatsapp",
+      "name": "Has WhatsApp?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2060, 320]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://REPLACE_TANGO_BASE/facturas/{{ $json.invoice_id }}/saldo",
+        "authentication": "genericCredentialType",
+        "options": { "timeout": 10000 }
+      },
+      "id": "revalidate-balance",
+      "name": "Re-validate balance (Tango)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2280, 220],
+      "disabled": true,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-4/OQ-G1. Avoids messaging customers who already paid."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Render the cadence-day template with invoice variables.\nconst tplRows = $('Read templates').all().map(r => r.json);\nconst inv = $json;\nconst tpl = (tplRows.find(t => Number(t.cadence_day) === Number(inv.matches_cadence_day)) || {}).message || 'Hola {{nombre}}, tenés la factura {{invoice_id}} vencida hace {{days_overdue}} días por {{currency}} {{amount_due}}.';\nconst body = tpl\n  .replace('{{nombre}}', inv.contact_name || '')\n  .replace('{{invoice_id}}', inv.invoice_id || '')\n  .replace('{{amount_due}}', inv.amount_due || '')\n  .replace('{{currency}}', inv.currency || 'ARS')\n  .replace('{{due_date}}', inv.due_date || '')\n  .replace('{{days_overdue}}', inv.days_overdue || '');\nreturn [{ json: { ...inv, message_body: body } }];"
+      },
+      "id": "compose-message",
+      "name": "Compose message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2480, 220]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://REPLACE_WHATSAPP_PROVIDER/send",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{ $('Get Contact').item.json.properties.phone }}\",\n  \"body\": {{ JSON.stringify($json.message_body) }}\n}",
+        "options": {}
+      },
+      "id": "send-whatsapp",
+      "name": "Send WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2680, 220],
+      "disabled": true,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-1/OQ-G2 (provider: Evolution vs Cloud API) + OQ-2 (opt-in legal). Hard gate: do not enable without documented opt-in."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "cobranzas_log", "mode": "name" },
+        "columns": { "mappingMode": "autoMapInputData", "value": {} },
+        "options": {}
+      },
+      "id": "log-sent",
+      "name": "Log sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2880, 220],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "resource": "company",
+        "operation": "update",
+        "companyId": "={{ $('Get Contact').item.json.properties.associatedcompanyid }}",
+        "updateFields": { "last_dunning_at": "={{ $now.toISO() }}" }
+      },
+      "id": "update-hubspot",
+      "name": "Update HubSpot",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [3080, 220],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" } }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "cobranzas_fallback", "mode": "name" },
+        "columns": { "mappingMode": "autoMapInputData", "value": {} },
+        "options": {}
+      },
+      "id": "fallback-append",
+      "name": "Fallback (no WhatsApp)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2280, 440],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "// End-of-run summary: alert if error rate > 20% or fallbacks > 10.\n// Internal alert send is OQ-G7 (channel TBC) — left as a log row here.\nreturn [{ json: { run_finished_at: new Date().toISOString(), note: 'summary placeholder — wire internal alert when OQ-G7 resolved' } }];"
+      },
+      "id": "summary",
+      "name": "End-of-run summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1660, 540]
+    }
+  ],
+  "connections": {
+    "Cron 09:00 ART": { "main": [[{ "node": "Read config", "type": "main", "index": 0 }]] },
+    "Read config": { "main": [[{ "node": "Read templates", "type": "main", "index": 0 }]] },
+    "Read templates": { "main": [[{ "node": "Fetch overdue invoices (Tango)", "type": "main", "index": 0 }]] },
+    "Fetch overdue invoices (Tango)": { "main": [[{ "node": "Compute cadence match", "type": "main", "index": 0 }]] },
+    "Compute cadence match": { "main": [[{ "node": "Exclude listed customers", "type": "main", "index": 0 }]] },
+    "Exclude listed customers": { "main": [[{ "node": "Split in batches", "type": "main", "index": 0 }]] },
+    "Split in batches": {
+      "main": [
+        [{ "node": "End-of-run summary", "type": "main", "index": 0 }],
+        [{ "node": "Idempotency lookup", "type": "main", "index": 0 }]
+      ]
+    },
+    "Idempotency lookup": { "main": [[{ "node": "Get Contact", "type": "main", "index": 0 }]] },
+    "Get Contact": { "main": [[{ "node": "Has WhatsApp?", "type": "main", "index": 0 }]] },
+    "Has WhatsApp?": {
+      "main": [
+        [{ "node": "Re-validate balance (Tango)", "type": "main", "index": 0 }],
+        [{ "node": "Fallback (no WhatsApp)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Re-validate balance (Tango)": { "main": [[{ "node": "Compose message", "type": "main", "index": 0 }]] },
+    "Compose message": { "main": [[{ "node": "Send WhatsApp", "type": "main", "index": 0 }]] },
+    "Send WhatsApp": { "main": [[{ "node": "Log sent", "type": "main", "index": 0 }]] },
+    "Log sent": { "main": [[{ "node": "Update HubSpot", "type": "main", "index": 0 }]] },
+    "Update HubSpot": { "main": [[{ "node": "Split in batches", "type": "main", "index": 0 }]] },
+    "Fallback (no WhatsApp)": { "main": [[{ "node": "Split in batches", "type": "main", "index": 0 }]] }
+  }
+}

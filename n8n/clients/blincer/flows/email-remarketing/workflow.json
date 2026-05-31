@@ -1,0 +1,497 @@
+{
+  "name": "Blincer — Email Remarketing",
+  "active": false,
+  "settings": {
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Email Remarketing\nMain campaign flow + 3 secondary cron chains (analytics, suppression sweep, queue flush) — same file, separate triggers (split into own workflows in prod per plan.md).\n\nDISABLED nodes:\n- **Send via platform** → OQ-1 (HubSpot Marketing Hub vs Mailchimp).\n- **Notify Guillermo / 48h summary** → OQ-G7 (alert channel).\n- **Get platform analytics** → OQ-1 (depends on chosen platform).\n\nDry-run gate is ON by default: first send of every campaign must run as mode=dry-run (lists recipients, no send). Idempotency = (campaign_id, contact_id), no TTL.",
+        "height": 360,
+        "width": 440,
+        "color": 4
+      },
+      "id": "sticky-doc",
+      "name": "Build notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-100, 20]
+    },
+    {
+      "parameters": { "content": "### Main campaign flow", "height": 80, "width": 260, "color": 7 },
+      "id": "sticky-main",
+      "name": "Section: main",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [200, 200]
+    },
+    {
+      "parameters": { "httpMethod": "POST", "path": "blincer-campaign", "responseMode": "onReceived", "options": {} },
+      "id": "webhook-campaign",
+      "name": "Webhook campaign",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 320],
+      "webhookId": "blincer-campaign"
+    },
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 10 * * *" }] }
+      },
+      "id": "cron-nurturing",
+      "name": "Cron nurturing 10:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 460]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "campaigns_config", "mode": "name" },
+        "options": {}
+      },
+      "id": "read-campaign-config",
+      "name": "Read campaign config",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [460, 380],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            { "id": "c-dry", "leftValue": "={{ $json.mode }}", "rightValue": "dry-run", "operator": { "type": "string", "operation": "equals" } }
+          ]
+        }
+      },
+      "id": "dry-run-gate",
+      "name": "Dry-run gate",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 380],
+      "notesInFlow": true,
+      "notes": "true = list recipients + preview to Guillermo, no send. false = real send path."
+    },
+    {
+      "parameters": {
+        "resource": "contactList",
+        "operation": "getAll",
+        "listId": "={{ $json.list_id }}",
+        "returnAll": true
+      },
+      "id": "resolve-segment",
+      "name": "Resolve segment",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [900, 460],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" } }
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "manual_suppression", "mode": "name" },
+        "options": {}
+      },
+      "id": "load-suppression",
+      "name": "Load suppression",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1120, 460],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "notesInFlow": true,
+      "notes": "OQ-2: merge of HubSpot do_not_email list + this manual sheet.",
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Remove suppressed contacts from the segment.\nconst suppressed = new Set($('Load suppression').all().map(r => (r.json.email || '').toLowerCase()));\nreturn $('Resolve segment').all().filter(c => !suppressed.has((c.json.properties?.email || '').toLowerCase()));"
+      },
+      "id": "subtract-suppression",
+      "name": "Subtract suppression",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 460]
+    },
+    {
+      "parameters": {
+        "operation": "lookup",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "campaigns_log", "mode": "name" },
+        "lookupColumn": "dedup_key",
+        "lookupValue": "={{ $('Read campaign config').first().json.campaign_id }}-{{ $json.properties.hs_object_id }}",
+        "options": {}
+      },
+      "id": "idempotency-lookup",
+      "name": "Idempotency lookup",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1560, 460],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Split recipients into send-now vs queue-for-tomorrow by daily_cap + send_window.\nconst cap = Number($('Read campaign config').first().json.daily_cap || 1500);\nconst all = $input.all();\nconst sendNow = all.slice(0, cap).map(i => ({ json: { ...i.json, _bucket: 'send_now' } }));\nconst queue = all.slice(cap).map(i => ({ json: { ...i.json, _bucket: 'queue' } }));\nreturn [...sendNow, ...queue];"
+      },
+      "id": "apply-caps",
+      "name": "Apply caps & window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 460]
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "update",
+        "additionalFields": {}
+      },
+      "id": "send-platform",
+      "name": "Send via platform",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [2000, 360],
+      "disabled": true,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 30000,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-1: HubSpot Marketing Hub vs Mailchimp. Swap for marketing-email node or Mailchimp node once decided.",
+      "credentials": { "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" } }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "campaigns_log", "mode": "name" },
+        "columns": { "mappingMode": "autoMapInputData", "value": {} },
+        "options": {}
+      },
+      "id": "log-sent",
+      "name": "Log sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2220, 360],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "update",
+        "additionalFields": { "customPropertiesUi": { "customPropertiesValues": [{ "property": "last_campaign_received_at", "value": "={{ $now.toISO() }}" }] } }
+      },
+      "id": "update-contact",
+      "name": "Update HubSpot Contact",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [2440, 360],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" } }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "campaign_queue", "mode": "name" },
+        "columns": { "mappingMode": "autoMapInputData", "value": {} },
+        "options": {}
+      },
+      "id": "queue-overflow",
+      "name": "Queue overflow",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2000, 560],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://REPLACE_INTERNAL_ALERT_WEBHOOK",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"text\": \"📣 Campaña iniciada — enviados + en cola\" }",
+        "options": {}
+      },
+      "id": "notify-guillermo",
+      "name": "Notify Guillermo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2660, 360],
+      "disabled": true,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-G7 / OQ-7: alert channel + recipients TBC."
+    },
+
+    {
+      "parameters": { "content": "### Secondary: analytics (48h summary)", "height": 80, "width": 300, "color": 5 },
+      "id": "sticky-analytics",
+      "name": "Section: analytics",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [200, 760]
+    },
+    {
+      "parameters": { "rule": { "interval": [{ "field": "cronExpression", "expression": "0 9 * * *" }] } },
+      "id": "cron-analytics",
+      "name": "Cron analytics 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 860]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "campaigns_log", "mode": "name" },
+        "options": {}
+      },
+      "id": "find-campaigns-48h",
+      "name": "Find campaigns ≥48h",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [460, 860],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://REPLACE_PLATFORM/analytics",
+        "options": {}
+      },
+      "id": "get-analytics",
+      "name": "Get platform analytics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 860],
+      "disabled": true,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-1: depends on HubSpot Marketing vs Mailchimp."
+    },
+    {
+      "parameters": {
+        "jsCode": "// open_rate, CTR, bounce_rate per campaign.\nreturn [{ json: { computed_at: new Date().toISOString() } }];"
+      },
+      "id": "compute-metrics",
+      "name": "Compute metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 860]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "campaigns_metrics", "mode": "name" },
+        "columns": { "mappingMode": "autoMapInputData", "value": {} },
+        "options": {}
+      },
+      "id": "update-metrics-sheet",
+      "name": "Update campaigns_metrics",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1120, 860],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://REPLACE_INTERNAL_ALERT_WEBHOOK",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"text\": \"📊 Resumen 48h de campaña\" }",
+        "options": {}
+      },
+      "id": "send-48h-summary",
+      "name": "Send 48h summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 860],
+      "disabled": true,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-G7 / OQ-7."
+    },
+
+    {
+      "parameters": { "content": "### Secondary: suppression sweep (nightly)", "height": 80, "width": 320, "color": 5 },
+      "id": "sticky-sweep",
+      "name": "Section: sweep",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [200, 1000]
+    },
+    {
+      "parameters": { "rule": { "interval": [{ "field": "cronExpression", "expression": "0 2 * * *" }] } },
+      "id": "cron-sweep",
+      "name": "Cron sweep 02:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 1100]
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "getRecentlyModified",
+        "additionalFields": {}
+      },
+      "id": "get-bounces-unsubs",
+      "name": "Get bounces & unsubs (24h)",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [460, 1100],
+      "notesInFlow": true,
+      "notes": "Filter to hard bounces + unsubscribes in last 24h.",
+      "credentials": { "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" } }
+    },
+    {
+      "parameters": {
+        "resource": "contactList",
+        "operation": "add",
+        "listId": "REPLACE_DO_NOT_EMAIL_LIST_ID",
+        "id": "={{ $json.vid }}"
+      },
+      "id": "add-do-not-email",
+      "name": "Add to do_not_email",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [680, 1100],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" } }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "campaigns_log", "mode": "name" },
+        "columns": { "mappingMode": "autoMapInputData", "value": {} },
+        "options": {}
+      },
+      "id": "log-sweep",
+      "name": "Log sweep result",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [900, 1100],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+
+    {
+      "parameters": { "content": "### Secondary: queue flush (daily)", "height": 80, "width": 280, "color": 5 },
+      "id": "sticky-queue",
+      "name": "Section: queue flush",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [200, 1240]
+    },
+    {
+      "parameters": { "rule": { "interval": [{ "field": "cronExpression", "expression": "0 9 * * *" }] } },
+      "id": "cron-queue",
+      "name": "Cron queue 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 1340]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "campaign_queue", "mode": "name" },
+        "options": {}
+      },
+      "id": "read-queue",
+      "name": "Read campaign_queue",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [460, 1340],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://REPLACE_N8N_BASE/webhook/blincer-campaign",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "retrigger-main",
+      "name": "Re-trigger main workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 1340],
+      "notesInFlow": true,
+      "notes": "Self-call to the campaign webhook for each queued row."
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "campaign_queue", "mode": "name" },
+        "columns": { "mappingMode": "autoMapInputData", "value": {} },
+        "options": {}
+      },
+      "id": "mark-queue-processed",
+      "name": "Mark queue processed",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [900, 1340],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" } }
+    }
+  ],
+  "connections": {
+    "Webhook campaign": { "main": [[{ "node": "Read campaign config", "type": "main", "index": 0 }]] },
+    "Cron nurturing 10:00": { "main": [[{ "node": "Read campaign config", "type": "main", "index": 0 }]] },
+    "Read campaign config": { "main": [[{ "node": "Dry-run gate", "type": "main", "index": 0 }]] },
+    "Dry-run gate": {
+      "main": [
+        [{ "node": "Notify Guillermo", "type": "main", "index": 0 }],
+        [{ "node": "Resolve segment", "type": "main", "index": 0 }]
+      ]
+    },
+    "Resolve segment": { "main": [[{ "node": "Load suppression", "type": "main", "index": 0 }]] },
+    "Load suppression": { "main": [[{ "node": "Subtract suppression", "type": "main", "index": 0 }]] },
+    "Subtract suppression": { "main": [[{ "node": "Idempotency lookup", "type": "main", "index": 0 }]] },
+    "Idempotency lookup": { "main": [[{ "node": "Apply caps & window", "type": "main", "index": 0 }]] },
+    "Apply caps & window": {
+      "main": [[
+        { "node": "Send via platform", "type": "main", "index": 0 },
+        { "node": "Queue overflow", "type": "main", "index": 0 }
+      ]]
+    },
+    "Send via platform": { "main": [[{ "node": "Log sent", "type": "main", "index": 0 }]] },
+    "Log sent": { "main": [[{ "node": "Update HubSpot Contact", "type": "main", "index": 0 }]] },
+    "Update HubSpot Contact": { "main": [[{ "node": "Notify Guillermo", "type": "main", "index": 0 }]] },
+
+    "Cron analytics 09:00": { "main": [[{ "node": "Find campaigns ≥48h", "type": "main", "index": 0 }]] },
+    "Find campaigns ≥48h": { "main": [[{ "node": "Get platform analytics", "type": "main", "index": 0 }]] },
+    "Get platform analytics": { "main": [[{ "node": "Compute metrics", "type": "main", "index": 0 }]] },
+    "Compute metrics": { "main": [[{ "node": "Update campaigns_metrics", "type": "main", "index": 0 }]] },
+    "Update campaigns_metrics": { "main": [[{ "node": "Send 48h summary", "type": "main", "index": 0 }]] },
+
+    "Cron sweep 02:00": { "main": [[{ "node": "Get bounces & unsubs (24h)", "type": "main", "index": 0 }]] },
+    "Get bounces & unsubs (24h)": { "main": [[{ "node": "Add to do_not_email", "type": "main", "index": 0 }]] },
+    "Add to do_not_email": { "main": [[{ "node": "Log sweep result", "type": "main", "index": 0 }]] },
+
+    "Cron queue 09:00": { "main": [[{ "node": "Read campaign_queue", "type": "main", "index": 0 }]] },
+    "Read campaign_queue": { "main": [[{ "node": "Re-trigger main workflow", "type": "main", "index": 0 }]] },
+    "Re-trigger main workflow": { "main": [[{ "node": "Mark queue processed", "type": "main", "index": 0 }]] }
+  }
+}

@@ -16,6 +16,9 @@ status: blocked-by-oqs
 
 > ⚠️ **BLOQUEADO** — este plan **NO** debe ejecutarse hasta resolver OQ-1, OQ-2, OQ-3, OQ-4 del spec y OQ-G1 (Tango), OQ-G7 (canal alerta) del README de Blincer. Lo que sigue es la **arquitectura propuesta** asumiendo Tango Nexo + HubSpot Pro+ + bloqueo "Flag + stage" (variante B de OQ-4). Re-validar cuando se resuelvan.
 
+> [!note] Build 2026-05-31 — skeleton importable
+> `workflow.json` construido a mano (sin MCP n8n). Nodos **disabled**: `Get current debt (Tango)` (OQ-1/OQ-G1) y `Send internal alert` (OQ-G7). Resto activo para testear punta a punta. `active: false`. Reemplazar `REPLACE_*` y mapear credenciales antes de activar.
+
 ---
 
 ## Architecture (propuesta, asume rama Nexo)

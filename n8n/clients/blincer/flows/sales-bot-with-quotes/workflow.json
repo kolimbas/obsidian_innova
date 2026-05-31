@@ -1,0 +1,321 @@
+{
+  "name": "Blincer — Sales Bot with Quotes",
+  "active": false,
+  "settings": {
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Sales Bot with Quotes (MVP skeleton)\nMost-blocked flow (9 local OQs + 3 global). DISABLED nodes:\n- **Dedup / Session / Save turn (Postgres)** → OQ-8 (storage TBC).\n- **Call LLM (Anthropic)** → OQ-1 (provider/model/budget).\n- **check_stock / emit_invoice (Tango)** → OQ-3/OQ-G1.\n- **create_quote (Gotenberg PDF + Drive)** → template + host TBC.\n- **Send WhatsApp reply** → OQ-2/OQ-G2 (provider).\n- **Handoff internal alert** → OQ-G7 (channel).\n\ncreate_quote / emit_invoice are placeholders for sub-workflows (see plan.md). Build them as separate workflows and swap these NoOp nodes for Execute Workflow nodes once OQs close.",
+        "height": 380,
+        "width": 440,
+        "color": 4
+      },
+      "id": "sticky-doc",
+      "name": "Build notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-80, 20]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "blincer-sales-bot",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-inbound",
+      "name": "Webhook inbound",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 320],
+      "webhookId": "blincer-sales-bot"
+    },
+    {
+      "parameters": { "respondWith": "text", "responseBody": "ok", "options": {} },
+      "id": "ack-200",
+      "name": "ACK 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [440, 320]
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": { "__rl": true, "value": "public", "mode": "name" },
+        "table": { "__rl": true, "value": "processed_messages", "mode": "name" },
+        "where": { "values": [{ "column": "message_id", "condition": "equal", "value": "={{ $json.body.data.key.id }}" }] },
+        "options": {}
+      },
+      "id": "dedup-messages",
+      "name": "Dedup processed_messages",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [640, 320],
+      "disabled": true,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-8: Postgres availability TBC. Dedup by provider message_id.",
+      "credentials": { "postgres": { "id": "REPLACE_ME", "name": "pg-innova-shared" } }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": { "__rl": true, "value": "public", "mode": "name" },
+        "table": { "__rl": true, "value": "conversaciones", "mode": "name" },
+        "where": { "values": [{ "column": "from_phone", "condition": "equal", "value": "={{ $json.body.data.key.remoteJid }}" }] },
+        "sort": { "values": [{ "column": "created_at", "direction": "DESC" }] },
+        "options": {}
+      },
+      "id": "session-lookup",
+      "name": "Session lookup",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [840, 320],
+      "disabled": true,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-8: Postgres storage TBC. Loads last N turns for context.",
+      "credentials": { "postgres": { "id": "REPLACE_ME", "name": "pg-innova-shared" } }
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "upsert",
+        "email": "={{ $json.body.data.key.remoteJid }}",
+        "additionalFields": { "phoneNumber": "={{ $json.body.data.key.remoteJid }}", "lifeCycleStage": "lead" }
+      },
+      "id": "contact-upsert",
+      "name": "Contact lookup/create",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [1040, 320],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "notesInFlow": true,
+      "notes": "OQ-9: if number not in HubSpot, create vs ask for data. Default here = create.",
+      "credentials": { "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Assemble Anthropic messages array: system prompt + history + new user message.\n// system_prompt & handoff_rules come from Sheet/HubSpot config (OQ-5/OQ-6).\nconst userMsg = $('Webhook inbound').item.json.body?.data?.message?.conversation || '';\nreturn [{ json: {\n  system: 'REPLACE_SYSTEM_PROMPT',\n  messages: [{ role: 'user', content: userMsg }],\n  tools: ['get_catalog','check_stock','lookup_customer','create_quote','emit_invoice','handoff_human']\n} }];"
+      },
+      "id": "build-prompt",
+      "name": "Build prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1240, 320]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "anthropic-version", "value": "2023-06-01" }] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-haiku-4-5-20251001\",\n  \"max_tokens\": 1024,\n  \"system\": {{ JSON.stringify($json.system) }},\n  \"messages\": {{ JSON.stringify($json.messages) }}\n}",
+        "options": {}
+      },
+      "id": "call-llm",
+      "name": "Call LLM (Anthropic)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1440, 320],
+      "disabled": true,
+      "retryOnFail": true,
+      "maxTries": 1,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-1: LLM provider/model/budget TBC. Default sketch = Claude Haiku 4.5, escalate to Sonnet for quotes.",
+      "credentials": { "httpHeaderAuth": { "id": "REPLACE_ME", "name": "anthropic-blincer-bot" } }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            { "conditions": { "options": { "caseSensitive": true, "typeValidation": "loose" }, "combinator": "and", "conditions": [{ "leftValue": "={{ $json.tool_name }}", "rightValue": "get_catalog", "operator": { "type": "string", "operation": "equals" } }] }, "outputKey": "get_catalog" },
+            { "conditions": { "options": { "caseSensitive": true, "typeValidation": "loose" }, "combinator": "and", "conditions": [{ "leftValue": "={{ $json.tool_name }}", "rightValue": "check_stock", "operator": { "type": "string", "operation": "equals" } }] }, "outputKey": "check_stock" },
+            { "conditions": { "options": { "caseSensitive": true, "typeValidation": "loose" }, "combinator": "and", "conditions": [{ "leftValue": "={{ $json.tool_name }}", "rightValue": "create_quote", "operator": { "type": "string", "operation": "equals" } }] }, "outputKey": "create_quote" },
+            { "conditions": { "options": { "caseSensitive": true, "typeValidation": "loose" }, "combinator": "and", "conditions": [{ "leftValue": "={{ $json.tool_name }}", "rightValue": "emit_invoice", "operator": { "type": "string", "operation": "equals" } }] }, "outputKey": "emit_invoice" },
+            { "conditions": { "options": { "caseSensitive": true, "typeValidation": "loose" }, "combinator": "and", "conditions": [{ "leftValue": "={{ $json.tool_name }}", "rightValue": "handoff_human", "operator": { "type": "string", "operation": "equals" } }] }, "outputKey": "handoff_human" }
+          ]
+        },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "id": "tool-router",
+      "name": "Tool router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1640, 320]
+    },
+    {
+      "parameters": {
+        "resource": "deal",
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 50,
+        "additionalFields": {}
+      },
+      "id": "tool-get-catalog",
+      "name": "get_catalog (HubSpot Products)",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [1900, 100],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "notesInFlow": true,
+      "notes": "OQ-4: catalog source = HubSpot Products (recommended). Swap resource to product list when scopes ready.",
+      "credentials": { "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" } }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://REPLACE_TANGO_BASE/stock?sku={{ $json.sku }}",
+        "authentication": "genericCredentialType",
+        "options": { "timeout": 8000 }
+      },
+      "id": "tool-check-stock",
+      "name": "check_stock (Tango)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1900, 240],
+      "disabled": true,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-3/OQ-G1. On failure should return 'stock_unknown' (never block the bot)."
+    },
+    {
+      "parameters": {},
+      "id": "tool-create-quote",
+      "name": "create_quote (sub-workflow)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1900, 380],
+      "disabled": true,
+      "notesInFlow": true,
+      "notes": "DISABLED placeholder — build as sub-workflow: validate items → Tango stock → totals → Gotenberg PDF → Drive upload → HubSpot Deal 'Cotización enviada'. Needs DOCX template + Gotenberg host."
+    },
+    {
+      "parameters": {},
+      "id": "tool-emit-invoice",
+      "name": "emit_invoice (sub-workflow)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1900, 520],
+      "disabled": true,
+      "notesInFlow": true,
+      "notes": "DISABLED placeholder — sub-workflow: credit-limit check (reuse flow 1) → approval gate (OQ-6) → Tango POST /comprobantes → send PDF → Deal 'Ganado'."
+    },
+    {
+      "parameters": {
+        "resource": "engagement",
+        "operation": "create",
+        "type": "task",
+        "metadata": { "subject": "Handoff: cliente requiere atención humana", "body": "={{ $json.handoff_reason || 'Umbral disparado' }}" },
+        "additionalFields": {}
+      },
+      "id": "tool-handoff-task",
+      "name": "handoff_human (HubSpot Task)",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [1900, 660],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": { "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://REPLACE_INTERNAL_ALERT_WEBHOOK",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"text\": \"🙋 Handoff bot ventas: {{ $json.from_phone }}\" }",
+        "options": {}
+      },
+      "id": "handoff-alert",
+      "name": "Handoff internal alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2120, 660],
+      "disabled": true,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-G7: internal alert channel TBC."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://REPLACE_WHATSAPP_PROVIDER/send",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{ $('Webhook inbound').item.json.body.data.key.remoteJid }}\",\n  \"body\": {{ JSON.stringify($json.reply_text || 'Gracias por tu mensaje.') }}\n}",
+        "options": {}
+      },
+      "id": "send-reply",
+      "name": "Send WhatsApp reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2360, 320],
+      "disabled": true,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-2/OQ-G2 (provider)."
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": { "__rl": true, "value": "public", "mode": "name" },
+        "table": { "__rl": true, "value": "conversaciones", "mode": "name" },
+        "columns": { "mappingMode": "autoMapInputData", "value": {} },
+        "options": {}
+      },
+      "id": "save-turn",
+      "name": "Save turn",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [2560, 320],
+      "disabled": true,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-8: Postgres TBC.",
+      "credentials": { "postgres": { "id": "REPLACE_ME", "name": "pg-innova-shared" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Update per-day metrics (messages, quotes, invoices, handoffs, tokens, USD).\nreturn [{ json: { updated_at: new Date().toISOString() } }];"
+      },
+      "id": "update-metrics",
+      "name": "Update metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2760, 320]
+    }
+  ],
+  "connections": {
+    "Webhook inbound": { "main": [[{ "node": "ACK 200", "type": "main", "index": 0 }]] },
+    "ACK 200": { "main": [[{ "node": "Dedup processed_messages", "type": "main", "index": 0 }]] },
+    "Dedup processed_messages": { "main": [[{ "node": "Session lookup", "type": "main", "index": 0 }]] },
+    "Session lookup": { "main": [[{ "node": "Contact lookup/create", "type": "main", "index": 0 }]] },
+    "Contact lookup/create": { "main": [[{ "node": "Build prompt", "type": "main", "index": 0 }]] },
+    "Build prompt": { "main": [[{ "node": "Call LLM (Anthropic)", "type": "main", "index": 0 }]] },
+    "Call LLM (Anthropic)": { "main": [[{ "node": "Tool router", "type": "main", "index": 0 }]] },
+    "Tool router": {
+      "main": [
+        [{ "node": "get_catalog (HubSpot Products)", "type": "main", "index": 0 }],
+        [{ "node": "check_stock (Tango)", "type": "main", "index": 0 }],
+        [{ "node": "create_quote (sub-workflow)", "type": "main", "index": 0 }],
+        [{ "node": "emit_invoice (sub-workflow)", "type": "main", "index": 0 }],
+        [{ "node": "handoff_human (HubSpot Task)", "type": "main", "index": 0 }],
+        [{ "node": "Send WhatsApp reply", "type": "main", "index": 0 }]
+      ]
+    },
+    "get_catalog (HubSpot Products)": { "main": [[{ "node": "Call LLM (Anthropic)", "type": "main", "index": 0 }]] },
+    "check_stock (Tango)": { "main": [[{ "node": "Call LLM (Anthropic)", "type": "main", "index": 0 }]] },
+    "create_quote (sub-workflow)": { "main": [[{ "node": "Send WhatsApp reply", "type": "main", "index": 0 }]] },
+    "emit_invoice (sub-workflow)": { "main": [[{ "node": "Send WhatsApp reply", "type": "main", "index": 0 }]] },
+    "handoff_human (HubSpot Task)": { "main": [[{ "node": "Handoff internal alert", "type": "main", "index": 0 }]] },
+    "Handoff internal alert": { "main": [[{ "node": "Send WhatsApp reply", "type": "main", "index": 0 }]] },
+    "Send WhatsApp reply": { "main": [[{ "node": "Save turn", "type": "main", "index": 0 }]] },
+    "Save turn": { "main": [[{ "node": "Update metrics", "type": "main", "index": 0 }]] }
+  }
+}

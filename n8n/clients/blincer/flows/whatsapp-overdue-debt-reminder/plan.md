@@ -16,6 +16,9 @@ status: blocked-by-oqs
 
 > ⚠️ **BLOQUEADO** — pendiente OQ-1 (provider WhatsApp), OQ-2 (opt-in), OQ-3 (fallback), OQ-4 (Tango source), OQ-G1, OQ-G2, OQ-G7. Asumimos para diseñar: Cloud API oficial (más estable a volumen), fallback B (log a Sheet), Tango Nexo. Re-validar cuando se cierren las OQs.
 
+> [!note] Build 2026-05-31 — skeleton importable
+> `workflow.json` construido a mano. Nodos **disabled**: `Fetch overdue invoices (Tango)`, `Re-validate balance (Tango)` (OQ-4/OQ-G1) y `Send WhatsApp` (OQ-1/OQ-G2 + opt-in OQ-2). Gate duro: no habilitar `Send WhatsApp` sin opt-in documentado. `active: false`.
+
 ---
 
 ## Architecture

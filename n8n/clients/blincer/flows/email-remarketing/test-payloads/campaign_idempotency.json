@@ -1,0 +1,9 @@
+{
+  "_case": "reenvío de la MISMA campaña a la MISMA lista → 0 sends (idempotency por campaign_id+contact_id)",
+  "_note": "Disparar dos veces seguidas con el mismo campaign_id; la segunda no debe enviar nada. También sirve para el caso suppression: un contact en do_not_email/manual_suppression nunca recibe.",
+  "campaign_id": "Q2-2026-test-marketing",
+  "triggered_by_user": "guillermo@blincer.com",
+  "list_id": "REPLACE_TEST_LIST_ID",
+  "mode": "send",
+  "scheduled_for": null
+}

@@ -1,0 +1,11 @@
+{
+  "_case": "confirma compra y vuelve a saludar en la misma sesión → debe retener contexto",
+  "_note": "Enviar después de convo_simple_quote con el mismo remoteJid; el dedup es por message_id (id distinto).",
+  "event": "messages.upsert",
+  "instance": "blincer",
+  "data": {
+    "key": { "remoteJid": "5491155556666@s.whatsapp.net", "fromMe": false, "id": "MSG-0005" },
+    "message": { "conversation": "Perfecto, confirmo la compra. Y de paso, ¿el mismo modelo viene en color negro?" },
+    "messageTimestamp": 1748528800
+  }
+}

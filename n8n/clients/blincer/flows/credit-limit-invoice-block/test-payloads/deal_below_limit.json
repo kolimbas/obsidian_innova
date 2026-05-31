@@ -1,0 +1,18 @@
+{
+  "_case": "debt + amount <= credit_limit → debe terminar en 'Log allowed', sin modificar el deal",
+  "subscriptionType": "deal.propertyChange",
+  "objectId": 38501094821,
+  "propertyName": "dealstage",
+  "propertyValue": "REPLACE_STAGE_ID_listo_para_facturar",
+  "occurredAt": 1748528400000,
+  "sourceId": "portal-99999999",
+  "portalId": 99999999,
+  "_mock_resolved": {
+    "deal_amount": 120000,
+    "company": {
+      "tango_customer_id": "C-9421",
+      "credit_limit_ars": 500000
+    },
+    "current_debt": 150000
+  }
+}

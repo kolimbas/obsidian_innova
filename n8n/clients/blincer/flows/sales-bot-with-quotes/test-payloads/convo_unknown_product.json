@@ -1,0 +1,10 @@
+{
+  "_case": "pregunta por sku inexistente → el bot NO debe inventar precio/stock (anti-alucinación)",
+  "event": "messages.upsert",
+  "instance": "blincer",
+  "data": {
+    "key": { "remoteJid": "5491155556666@s.whatsapp.net", "fromMe": false, "id": "MSG-0002" },
+    "message": { "conversation": "Tenés la cerradura modelo ZZZ-9999 ultra premium?" },
+    "messageTimestamp": 1748528500
+  }
+}

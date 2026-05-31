@@ -1,0 +1,402 @@
+{
+  "name": "Blincer — Credit Limit Invoice Block",
+  "active": false,
+  "settings": {
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Credit Limit Invoice Block\nDISABLED nodes wait on Open Questions:\n- **Get current debt (Tango)** → OQ-1 / OQ-G1 (Tango Nexo vs local).\n- **Send internal alert** → OQ-G7 (alert channel TBC).\n\nWhen disabled, n8n passes data straight through, so the rest of the flow still runs end-to-end for testing. Enable each node once its OQ is resolved and credentials are mapped.",
+        "height": 320,
+        "width": 380,
+        "color": 4
+      },
+      "id": "sticky-doc",
+      "name": "Build notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-40, 60]
+    },
+    {
+      "parameters": {
+        "eventsUi": {
+          "eventValues": [
+            { "name": "deal.propertyChange", "property": "dealstage" }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "id": "hubspot-trigger",
+      "name": "HubSpot Deal Trigger",
+      "type": "n8n-nodes-base.hubspotTrigger",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "credentials": {
+        "hubspotDeveloperApi": { "id": "REPLACE_ME", "name": "hubspot-blincer-developer" }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c-stage",
+              "leftValue": "={{ $json.propertyValue }}",
+              "rightValue": "REPLACE_STAGE_ID_listo_para_facturar",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        }
+      },
+      "id": "filter-stage",
+      "name": "Filter stage = Listo para facturar",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300],
+      "notesInFlow": true,
+      "notes": "OQ-6: replace with real stage id."
+    },
+    {
+      "parameters": {
+        "operation": "lookup",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "idempotency_credit_block", "mode": "name" },
+        "lookupColumn": "event_key",
+        "lookupValue": "={{ $json.eventId }}-{{ $json.occurredAt }}",
+        "options": {}
+      },
+      "id": "idempotency-lookup",
+      "name": "Idempotency lookup",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [680, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c-new",
+              "leftValue": "={{ $json.event_key }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "notExists", "singleValue": true }
+            }
+          ]
+        }
+      },
+      "id": "if-new-event",
+      "name": "If new event",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "resource": "deal",
+        "operation": "get",
+        "dealId": "={{ $('HubSpot Deal Trigger').item.json.objectId }}",
+        "additionalFields": { "includeAssociations": true }
+      },
+      "id": "get-deal",
+      "name": "Get Deal",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [1120, 300],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "company",
+        "operation": "get",
+        "companyId": "={{ $json.associations?.companyIds?.[0] }}",
+        "additionalFields": { "properties": ["tango_customer_id", "credit_limit_ars"] }
+      },
+      "id": "get-company",
+      "name": "Get Company",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [1340, 300],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c-map",
+              "leftValue": "={{ $json.properties?.tango_customer_id }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "exists", "singleValue": true }
+            }
+          ]
+        }
+      },
+      "id": "validate-mapping",
+      "name": "Validate Tango mapping",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://REPLACE_TANGO_BASE/cuentas-corrientes/cliente/{{ $json.properties.tango_customer_id }}",
+        "authentication": "genericCredentialType",
+        "options": { "timeout": 10000 }
+      },
+      "id": "get-current-debt",
+      "name": "Get current debt (Tango)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 300],
+      "disabled": true,
+      "onError": "continueErrorOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-1/OQ-G1: Tango version (Nexo REST vs local CSV/ODBC) undefined."
+    },
+    {
+      "parameters": {
+        "jsCode": "// OQ-3: define what counts as debt (cuenta corriente / facturas no cobradas / cheques).\nconst deal = $('Get Deal').item.json;\nconst company = $('Get Company').item.json.properties || {};\nconst debt = Number($json.current_debt ?? company.current_debt ?? 0);\nconst amount = Number(deal.properties?.amount ?? 0);\nconst limit = Number(company.credit_limit_ars ?? 0);\nconst projected = debt + amount;\nconst block = projected > limit;\nreturn [{ json: {\n  deal_id: deal.id,\n  company_id: company.hs_object_id,\n  current_debt: debt,\n  deal_amount: amount,\n  credit_limit: limit,\n  projected,\n  block,\n  decision: block ? 'blocked' : 'allowed',\n  decided_at: new Date().toISOString()\n} }];"
+      },
+      "id": "compute-decision",
+      "name": "Compute decision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c-block",
+              "leftValue": "={{ $json.block }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+            }
+          ]
+        }
+      },
+      "id": "if-block",
+      "name": "If block",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2220, 300]
+    },
+    {
+      "parameters": {
+        "resource": "deal",
+        "operation": "update",
+        "dealId": "={{ $json.deal_id }}",
+        "updateFields": {
+          "block_invoice": true,
+          "dealstage": "REPLACE_STAGE_ID_bloqueado_por_deuda"
+        }
+      },
+      "id": "update-deal-block",
+      "name": "Update Deal (block)",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [2440, 180],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "engagement",
+        "operation": "create",
+        "type": "note",
+        "metadata": {
+          "body": "=Facturación bloqueada: deuda ARS {{ $json.current_debt }} + monto ARS {{ $json.deal_amount }} supera límite ARS {{ $json.credit_limit }} al {{ $json.decided_at }}"
+        },
+        "additionalFields": { "dealIds": "={{ $json.deal_id }}" }
+      },
+      "id": "create-deal-note",
+      "name": "Create Deal Note",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [2660, 180],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "engagement",
+        "operation": "create",
+        "type": "note",
+        "metadata": {
+          "body": "=Cliente con deuda sobre límite. Deal {{ $json.deal_id }} bloqueado. Proyectado ARS {{ $json.projected }} > límite ARS {{ $json.credit_limit }}."
+        },
+        "additionalFields": { "companyIds": "={{ $json.company_id }}" }
+      },
+      "id": "create-company-note",
+      "name": "Create Company Note",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [2880, 180],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "hubspotAppToken": { "id": "REPLACE_ME", "name": "hubspot-blincer-main" }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://REPLACE_INTERNAL_ALERT_WEBHOOK",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🚫 Facturación bloqueada por deuda\\nDeal: {{ $json.deal_id }}\\nDeuda: ARS {{ $json.current_debt }}\\nMonto: ARS {{ $json.deal_amount }}\\nLímite: ARS {{ $json.credit_limit }}\"\n}",
+        "options": {}
+      },
+      "id": "send-internal-alert",
+      "name": "Send internal alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3100, 180],
+      "disabled": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notesInFlow": true,
+      "notes": "DISABLED — OQ-G7: internal alert channel undefined (WhatsApp group / email / Slack / Teams)."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "audit_credit_block", "mode": "name" },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {}
+        },
+        "options": {}
+      },
+      "id": "append-audit-block",
+      "name": "Append audit (blocked)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [3320, 180],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": {
+        "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "REPLACE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "audit_credit_block", "mode": "name" },
+        "columns": { "mappingMode": "autoMapInputData", "value": {} },
+        "options": {}
+      },
+      "id": "log-allowed",
+      "name": "Log allowed",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2440, 420],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "credentials": {
+        "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "gsheets-blincer-ops" }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "end-skip",
+      "name": "End (skip)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1120, 540]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Error branch: no tango_customer_id mapping.\nreturn [{ json: { error: 'missing_tango_customer_id', deal_id: $('Get Deal').item.json.id, at: new Date().toISOString() } }];"
+      },
+      "id": "err-no-mapping",
+      "name": "Error: no Tango mapping",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 520]
+    }
+  ],
+  "connections": {
+    "HubSpot Deal Trigger": { "main": [[{ "node": "Filter stage = Listo para facturar", "type": "main", "index": 0 }]] },
+    "Filter stage = Listo para facturar": {
+      "main": [
+        [{ "node": "Idempotency lookup", "type": "main", "index": 0 }],
+        [{ "node": "End (skip)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Idempotency lookup": { "main": [[{ "node": "If new event", "type": "main", "index": 0 }]] },
+    "If new event": {
+      "main": [
+        [{ "node": "Get Deal", "type": "main", "index": 0 }],
+        [{ "node": "End (skip)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Deal": { "main": [[{ "node": "Get Company", "type": "main", "index": 0 }]] },
+    "Get Company": { "main": [[{ "node": "Validate Tango mapping", "type": "main", "index": 0 }]] },
+    "Validate Tango mapping": {
+      "main": [
+        [{ "node": "Get current debt (Tango)", "type": "main", "index": 0 }],
+        [{ "node": "Error: no Tango mapping", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get current debt (Tango)": {
+      "main": [
+        [{ "node": "Compute decision", "type": "main", "index": 0 }],
+        [{ "node": "Compute decision", "type": "main", "index": 0 }]
+      ]
+    },
+    "Compute decision": { "main": [[{ "node": "If block", "type": "main", "index": 0 }]] },
+    "If block": {
+      "main": [
+        [{ "node": "Update Deal (block)", "type": "main", "index": 0 }],
+        [{ "node": "Log allowed", "type": "main", "index": 0 }]
+      ]
+    },
+    "Update Deal (block)": { "main": [[{ "node": "Create Deal Note", "type": "main", "index": 0 }]] },
+    "Create Deal Note": { "main": [[{ "node": "Create Company Note", "type": "main", "index": 0 }]] },
+    "Create Company Note": { "main": [[{ "node": "Send internal alert", "type": "main", "index": 0 }]] },
+    "Send internal alert": { "main": [[{ "node": "Append audit (blocked)", "type": "main", "index": 0 }]] }
+  }
+}

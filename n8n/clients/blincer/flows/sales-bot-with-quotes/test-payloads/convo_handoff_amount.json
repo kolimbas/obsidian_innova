@@ -1,0 +1,10 @@
+{
+  "_case": "pide algo que supera el umbral de monto → handoff_human",
+  "event": "messages.upsert",
+  "instance": "blincer",
+  "data": {
+    "key": { "remoteJid": "5491155557777@s.whatsapp.net", "fromMe": false, "id": "MSG-0003" },
+    "message": { "conversation": "Quiero cotizar 5000 cerraduras modelo X para una licitación" },
+    "messageTimestamp": 1748528600
+  }
+}

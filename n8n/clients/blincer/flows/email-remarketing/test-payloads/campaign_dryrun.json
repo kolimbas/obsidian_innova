@@ -1,0 +1,8 @@
+{
+  "_case": "primer envío de campaña en dry-run → lista destinatarios + preview a Guillermo, sin enviar",
+  "campaign_id": "Q2-2026-nuevo-modelo-tango",
+  "triggered_by_user": "guillermo@blincer.com",
+  "list_id": "47",
+  "mode": "dry-run",
+  "scheduled_for": null
+}
