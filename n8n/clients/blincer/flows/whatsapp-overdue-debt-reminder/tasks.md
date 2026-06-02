@@ -6,13 +6,17 @@ tags:
   - nivel-3
 client: blincer
 flow: whatsapp-overdue-debt-reminder
-updated: 2026-05-29
+updated: 2026-06-02
 status: blocked-by-oqs
 ---
 
 # Tasks — Avisos automáticos de deuda vencida por WhatsApp
 
 ← Volver a [[n8n/METHODOLOGY|Methodology]] · [[n8n/clients/blincer/flows/whatsapp-overdue-debt-reminder/plan|Plan]]
+
+> [!success] Progreso 2026-06-02 (Sheets backing)
+> Hecho vía API n8n: spreadsheet **Blincer - Cobranzas** (`12-VpWiZ2iw0QiHVast7-NOrAwASEAxOJuH4jer-Jb40`) creado con `cobranzas_config`, `cobranzas_templates`, `cobranzas_log`, `cobranzas_fallback`, `idempotency_cobranzas` (columnas según skeleton; **faltan** `cobranzas_errors`, `cobranzas_metrics` y columnas extra del § Setup). `REPLACE_SHEET_ID` reemplazado + credencial mapeada a `Google Sheets account`. `Idempotency lookup` quedó **disabled** (v4.5 sin op `lookup` + falta write-back).
+> Follow-ups: (1) arreglar tabs `cobranzas_config`/`cobranzas_templates` (se mezclaron al crear); (2) crear `cobranzas_errors`/`cobranzas_metrics`; (3) cablear dedup real.
 
 ---
 

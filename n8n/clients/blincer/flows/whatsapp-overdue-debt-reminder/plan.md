@@ -6,7 +6,7 @@ tags:
   - nivel-3
 client: blincer
 flow: whatsapp-overdue-debt-reminder
-updated: 2026-05-29
+updated: 2026-06-02
 status: blocked-by-oqs
 ---
 
@@ -18,6 +18,9 @@ status: blocked-by-oqs
 
 > [!note] Build 2026-05-31 — skeleton importable
 > `workflow.json` construido a mano. Nodos **disabled**: `Fetch overdue invoices (Tango)`, `Re-validate balance (Tango)` (OQ-4/OQ-G1) y `Send WhatsApp` (OQ-1/OQ-G2 + opt-in OQ-2). Gate duro: no habilitar `Send WhatsApp` sin opt-in documentado. `active: false`.
+
+> [!success] Progreso 2026-06-02 — Sheets cableados
+> Backing en el spreadsheet **Blincer - Cobranzas** (`12-VpWiZ2iw0QiHVast7-NOrAwASEAxOJuH4jer-Jb40`). Tabs creadas: `cobranzas_config`, `cobranzas_templates`, `cobranzas_log`, `cobranzas_fallback`, `idempotency_cobranzas` (columnas según el skeleton — `cobranzas_errors`/`cobranzas_metrics` y columnas extra del plan **aún no**). `REPLACE_SHEET_ID` reemplazado y credencial mapeada. `Idempotency lookup` quedó **disabled** (op `lookup` inexistente en googleSheets v4.5 + falta write-back — ver [[n8n/nodes/google-sheets|node note]]). Pendiente fix tab `cobranzas_config`/`cobranzas_templates` (se mezclaron al crear).
 
 ---
 
@@ -86,11 +89,11 @@ flowchart LR
 
 | Credential | n8n credential name | Stored in | Owner |
 | --- | --- | --- | --- |
-| HubSpot Private App | `hubspot-blincer-main` (reusa) | n8n | Innova |
-| Tango | `tango-nexo-blincer` o local (reusa) | n8n | Innova |
-| Google Sheets | `gsheets-blincer-ops` (reusa) | n8n | Innova |
+| HubSpot Private App | `hubspot-blincer-main` (a crear — hoy placeholder) | n8n | Innova |
+| Tango | `tango-nexo-blincer` o local (a crear) | n8n | Innova |
+| Google Sheets | **`Google Sheets account`** (`NNpCFCk3F2rhlxUk`, reusa la de BLINCER-T0xx) | n8n | Innova |
 | WhatsApp provider | `whatsapp-blincer` (a crear) | n8n | Innova / Sandra |
-| Canal alerta interno | `internal-alert-blincer` (reusa) | n8n | Innova |
+| Canal alerta interno | `internal-alert-blincer` (a crear) | n8n | Innova |
 
 ### Observability
 

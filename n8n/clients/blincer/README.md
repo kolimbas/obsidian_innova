@@ -5,7 +5,7 @@ tags:
   - nivel-3
 client: blincer
 status: pre-sales
-updated: 2026-05-29
+updated: 2026-06-02
 ---
 
 # Blincer — n8n Workspace
@@ -43,13 +43,33 @@ Automate Sandra's admin work (bank reconciliation, recurring invoicing, manageme
 
 | Flow | Status | Trigger | Last update |
 | --- | --- | --- | --- |
-| [[n8n/clients/blincer/flows/credit-limit-invoice-block/spec\|Bloqueo facturación por deuda]] | skeleton built (OQ nodes disabled) | HubSpot Deal stage change | 2026-05-31 |
-| [[n8n/clients/blincer/flows/whatsapp-overdue-debt-reminder/spec\|Avisos deuda vencida WhatsApp]] | skeleton built (OQ nodes disabled) | Cron diario 09:00 ART | 2026-05-31 |
-| [[n8n/clients/blincer/flows/sales-bot-with-quotes/spec\|Bot ventas + cotizaciones/facturas]] | skeleton built (OQ nodes disabled) | WhatsApp inbound webhook | 2026-05-31 |
-| [[n8n/clients/blincer/flows/email-remarketing/spec\|Remarketing y difusiones email]] | skeleton built (OQ nodes disabled) | Manual HubSpot + cron nurturing | 2026-05-31 |
+| [[n8n/clients/blincer/flows/credit-limit-invoice-block/spec\|Bloqueo facturación por deuda]] | skeleton + Sheets backing wired (OQ nodes disabled) | HubSpot Deal stage change | 2026-06-02 |
+| [[n8n/clients/blincer/flows/whatsapp-overdue-debt-reminder/spec\|Avisos deuda vencida WhatsApp]] | skeleton + Sheets backing wired (OQ nodes disabled) | Cron diario 09:00 ART | 2026-06-02 |
+| [[n8n/clients/blincer/flows/sales-bot-with-quotes/spec\|Bot ventas + cotizaciones/facturas]] | skeleton built (OQ nodes disabled) · usa Postgres, no Sheets | WhatsApp inbound webhook | 2026-05-31 |
+| [[n8n/clients/blincer/flows/email-remarketing/spec\|Remarketing y difusiones email]] | skeleton + Sheets backing wired (OQ nodes disabled) | Manual HubSpot + cron nurturing | 2026-06-02 |
 
 > [!note] Build status 2026-05-31 — importable skeletons
 > Cada flow tiene un `workflow.json` importable en n8n (Import from File). Construidos a mano desde los `plan.md` (el MCP de n8n no estaba conectado). Los nodos que dependen de open questions quedan **`disabled: true`** (Tango, provider WhatsApp, LLM, canal de alerta interno OQ-G7, plataforma de email). Todos los workflows están `active: false`. Antes de activar: mapear credenciales (`hubspot-blincer-main`, `gsheets-blincer-ops`, etc.), reemplazar los placeholders `REPLACE_*`, resolver las OQs y habilitar los nodos correspondientes.
+
+> [!success] Progreso 2026-06-02 — Sheets backing cableado en n8n
+> Los 4 skeletons ya están importados en la instancia n8n del cliente (`n8n.srv1512692.hstgr.cloud`). En los 3 flows que usan Sheets (credit-limit, whatsapp-overdue, email-remarketing) se hizo vía API:
+> - Creados los **Google Sheets backing** (ver sección siguiente) y reemplazados todos los `REPLACE_SHEET_ID` por los IDs reales.
+> - **Credencial Sheets:** se mapeó a la credencial OAuth2 existente **`Google Sheets account`** (id `NNpCFCk3F2rhlxUk`), la misma de los `BLINCER-T0xx`. El nombre `gsheets-blincer-ops` de los planes nunca llegó a existir como credencial → docs corregidos.
+> - **Idempotencia:** los 3 nodos "Idempotency lookup" quedaron **`disabled`** — la op `lookup` no existe en googleSheets v4.5 y falta el nodo de write-back (ver [[n8n/nodes/google-sheets|node note]]). Pasan datos de largo para test; dedup real pendiente.
+> - Siguen `active: false`. HubSpot y Postgres siguen como placeholders (no hay credencial real en la instancia todavía).
+
+## Backing stores — Google Sheets (2026-06-02)
+
+Un spreadsheet por flow (dueño `borgonifrancisco@gmail.com`, compartidos *anyone-with-link = editor* según convención del cliente). Las columnas creadas son las que el **skeleton realmente usa** — más magras que los `plan.md` (las tabs `*_errors` y `*_metrics` y varias columnas extra del plan **todavía no se crearon**).
+
+| Flow | Spreadsheet | ID | Tabs creadas |
+| --- | --- | --- | --- |
+| credit-limit | Blincer - Credit Limit | `1kjsp67c8eKVTqj6FoHpKI6mTtqoTFsBSUdEv9E0gPaI` | `audit_credit_block`, `idempotency_credit` |
+| whatsapp-overdue | Blincer - Cobranzas | `12-VpWiZ2iw0QiHVast7-NOrAwASEAxOJuH4jer-Jb40` | `cobranzas_config`, `cobranzas_templates`, `cobranzas_log`, `cobranzas_fallback`, `idempotency_cobranzas` |
+| email-remarketing | Blincer - Campaigns | `1-T8VhM8B-u0RPvZfCoZO9c7B1DaFTC0Qu0ElrD9uv6c` | `campaigns_config`, `manual_suppression`, `campaigns_log`, `campaign_queue`, `campaigns_metrics` |
+
+> [!warning] Follow-up Cobranzas
+> En "Blincer - Cobranzas" la tab `cobranzas_config` quedó con el contenido de templates y `cobranzas_templates` vacía (mezcla al crear). Falta: dejar `cobranzas_config` con header `cadence_days | excluded_customers` + fila `[1,7,15,30,45,60]` / `[]`, y mover las 4 filas de template a `cobranzas_templates`.
 
 ## Open dependencies
 

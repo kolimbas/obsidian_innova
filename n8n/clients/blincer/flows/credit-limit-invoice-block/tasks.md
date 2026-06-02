@@ -6,7 +6,7 @@ tags:
   - nivel-3
 client: blincer
 flow: credit-limit-invoice-block
-updated: 2026-05-29
+updated: 2026-06-02
 status: blocked-by-oqs
 ---
 
@@ -15,6 +15,9 @@ status: blocked-by-oqs
 ← Volver a [[n8n/METHODOLOGY|Methodology]] · [[n8n/clients/blincer/flows/credit-limit-invoice-block/plan|Plan]]
 
 > Ordered, verifiable. Update as work progresses; do not delete completed items. **No empezar Build hasta que Setup esté 100% verde.**
+
+> [!success] Progreso 2026-06-02 (Sheets backing)
+> Hecho vía API n8n: spreadsheet **Blincer - Credit Limit** (`1kjsp67c8eKVTqj6FoHpKI6mTtqoTFsBSUdEv9E0gPaI`) creado con `audit_credit_block` + `idempotency_credit` (**falta** `errors_credit_block`). `REPLACE_SHEET_ID` reemplazado + credencial mapeada a `Google Sheets account`. `Idempotency lookup` quedó **disabled** (v4.5 sin op `lookup` + falta write-back). Siguen pendientes los placeholders no-Sheets: `REPLACE_STAGE_ID` (OQ-6), Tango (`REPLACE_TANGO_BASE`), alerta (`REPLACE_INTERNAL_ALERT_WEBHOOK`), credencial HubSpot real.
 
 ---
 

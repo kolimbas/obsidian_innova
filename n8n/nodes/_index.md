@@ -3,7 +3,7 @@ tags:
   - n8n
   - nodes
   - nivel-2
-updated: 2026-05-28
+updated: 2026-06-02
 ---
 
 # Node Notes
@@ -18,7 +18,7 @@ updated: 2026-05-28
 
 | Node | Why we have notes | Last update |
 | --- | --- | --- |
-| _none yet_ |  |  |
+| [[n8n/nodes/google-sheets\|Google Sheets]] | v4.5 sin op `lookup`; `read` filtrado corta rama si no matchea; autoMap append | 2026-06-02 |
 
 ---
 

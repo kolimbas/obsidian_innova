@@ -3,7 +3,7 @@ tags:
   - n8n
   - lessons-learned
   - nivel-2
-updated: 2026-05-28
+updated: 2026-06-02
 ---
 
 # Lessons Learned
@@ -18,7 +18,7 @@ updated: 2026-05-28
 
 | Date | Client / flow | Takeaway |
 | --- | --- | --- |
-| _empty_ |  |  |
+| 2026-06-02 | blincer · 3 flows Sheets (build) | googleSheets v4.5 no tiene op `lookup`; la idempotencia por Sheet necesita `read`+filtro **y** un nodo de write-back (no viene en el esqueleto). Ver [[n8n/nodes/google-sheets\|node note]]. |
 
 ---
 

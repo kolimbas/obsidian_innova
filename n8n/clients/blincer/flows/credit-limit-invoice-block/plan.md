@@ -6,7 +6,7 @@ tags:
   - nivel-3
 client: blincer
 flow: credit-limit-invoice-block
-updated: 2026-05-29
+updated: 2026-06-02
 status: blocked-by-oqs
 ---
 
@@ -18,6 +18,9 @@ status: blocked-by-oqs
 
 > [!note] Build 2026-05-31 — skeleton importable
 > `workflow.json` construido a mano (sin MCP n8n). Nodos **disabled**: `Get current debt (Tango)` (OQ-1/OQ-G1) y `Send internal alert` (OQ-G7). Resto activo para testear punta a punta. `active: false`. Reemplazar `REPLACE_*` y mapear credenciales antes de activar.
+
+> [!success] Progreso 2026-06-02 — Sheets cableados
+> Backing en el spreadsheet **Blincer - Credit Limit** (`1kjsp67c8eKVTqj6FoHpKI6mTtqoTFsBSUdEv9E0gPaI`). Tabs: `audit_credit_block`, `idempotency_credit` (la `errors_credit_block` del plan **aún no**). `REPLACE_SHEET_ID` reemplazado y credencial Sheets mapeada. El nodo `Idempotency lookup` quedó **disabled** (op `lookup` inexistente en googleSheets v4.5 + falta write-back — ver [[n8n/nodes/google-sheets|node note]]). Faltan todavía: stage id real (`REPLACE_STAGE_ID`), Tango y canal de alerta.
 
 ---
 
@@ -85,10 +88,10 @@ flowchart LR
 
 | Credential | n8n credential name | Stored in | Owner |
 | --- | --- | --- | --- |
-| HubSpot Private App | `hubspot-blincer-main` | n8n credentials | Innova (token rotable) |
-| Tango Nexo API | `tango-nexo-blincer` (si aplica) | n8n credentials | Innova (delegado por Sandra) |
-| Google Sheets (audit) | `gsheets-blincer-ops` | n8n credentials | Innova |
-| Canal alerta interna | `internal-alert-blincer` | n8n credentials | depende de OQ-G7 |
+| HubSpot Private App | `hubspot-blincer-main` (a crear — hoy placeholder) | n8n credentials | Innova (token rotable) |
+| Tango Nexo API | `tango-nexo-blincer` (si aplica, a crear) | n8n credentials | Innova (delegado por Sandra) |
+| Google Sheets (audit) | **`Google Sheets account`** (`NNpCFCk3F2rhlxUk`, reusa la de BLINCER-T0xx) | n8n credentials | Innova |
+| Canal alerta interna | `internal-alert-blincer` (a crear) | n8n credentials | depende de OQ-G7 |
 
 No secrets inline. Toda referencia vía `{{$credentials.*}}` o `{{$env.*}}` para flags no sensibles.
 

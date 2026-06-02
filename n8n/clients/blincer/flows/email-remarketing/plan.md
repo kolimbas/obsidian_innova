@@ -6,7 +6,7 @@ tags:
   - nivel-3
 client: blincer
 flow: email-remarketing
-updated: 2026-05-29
+updated: 2026-06-02
 status: blocked-by-oqs
 ---
 
@@ -18,6 +18,9 @@ status: blocked-by-oqs
 
 > [!note] Build 2026-05-31 — skeleton importable
 > `workflow.json` con el flow principal + las 3 cadenas cron secundarias (analytics, suppression sweep, queue flush) en el mismo archivo (separar en workflows propios en prod). Nodos **disabled**: `Send via platform` y `Get platform analytics` (OQ-1 HubSpot Marketing vs Mailchimp), `Notify Guillermo` y `Send 48h summary` (OQ-G7/OQ-7). Dry-run gate activo por default. `active: false`.
+
+> [!success] Progreso 2026-06-02 — Sheets cableados
+> Backing en el spreadsheet **Blincer - Campaigns** (`1-T8VhM8B-u0RPvZfCoZO9c7B1DaFTC0Qu0ElrD9uv6c`). Tabs: `campaigns_config`, `manual_suppression`, `campaigns_log`, `campaign_queue`, `campaigns_metrics` (la `campaigns_errors` del plan **aún no**). `REPLACE_SHEET_ID` reemplazado en los 10 nodos Sheets y credencial mapeada. `Idempotency lookup` quedó **disabled** (op `lookup` inexistente en v4.5 + falta write-back — ver [[n8n/nodes/google-sheets|node note]]). ⚠️ El nodo `Re-trigger main workflow` sigue con `REPLACE_N8N_BASE` (rompe si corre el cron de cola) — pendiente poner la base real.
 
 ---
 
@@ -112,10 +115,10 @@ flowchart LR
 
 | Credential | n8n credential name | Stored in | Owner |
 | --- | --- | --- | --- |
-| HubSpot Private App (Marketing scope) | `hubspot-blincer-main` (extender scopes) | n8n | Innova |
-| Mailchimp (si aplica) | `mailchimp-blincer` | n8n | Innova |
-| Google Sheets | `gsheets-blincer-ops` (reusa) | n8n | Innova |
-| Canal alerta interno | `internal-alert-blincer` (reusa) | n8n | Innova |
+| HubSpot Private App (Marketing scope) | `hubspot-blincer-main` (a crear — hoy placeholder) | n8n | Innova |
+| Mailchimp (si aplica) | `mailchimp-blincer` (a crear) | n8n | Innova |
+| Google Sheets | **`Google Sheets account`** (`NNpCFCk3F2rhlxUk`, reusa la de BLINCER-T0xx) | n8n | Innova |
+| Canal alerta interno | `internal-alert-blincer` (a crear) | n8n | Innova |
 
 ### Observability
 
