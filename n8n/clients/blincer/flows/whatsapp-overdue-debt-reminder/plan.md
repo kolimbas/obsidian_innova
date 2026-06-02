@@ -22,6 +22,9 @@ status: blocked-by-oqs
 > [!success] Progreso 2026-06-02 — Sheets cableados
 > Backing en el spreadsheet **Blincer - Cobranzas** (`12-VpWiZ2iw0QiHVast7-NOrAwASEAxOJuH4jer-Jb40`). Tabs creadas: `cobranzas_config`, `cobranzas_templates`, `cobranzas_log`, `cobranzas_fallback`, `idempotency_cobranzas` (columnas según el skeleton — `cobranzas_errors`/`cobranzas_metrics` y columnas extra del plan **aún no**). `REPLACE_SHEET_ID` reemplazado y credencial mapeada. `Idempotency lookup` quedó **disabled** (op `lookup` inexistente en googleSheets v4.5 + falta write-back — ver [[n8n/nodes/google-sheets|node note]]). (Las tabs `cobranzas_config`/`cobranzas_templates` se habían mezclado al crear y se corrigieron el 2026-06-02.)
 
+> [!success] Progreso 2026-06-02 (dedup real + error workflow)
+> **Dedup implementada** (patrón [[n8n/patterns/sheet-idempotency|Sheet-based idempotency]]): `Idempotency lookup` ahora es un `read` de `idempotency_cobranzas` (`alwaysOutputData`) → `Dedup filter` (Code) filtra por clave `(invoice_id, cadence_day)` → write-back `Idem row`→`Idem write` (fan-out desde `Log sent`, una fila por factura enviada). Asignado **Error Workflow** `T-000`. Validado estructuralmente; sin test de runtime (falta credencial HubSpot/WhatsApp + OQs).
+
 ---
 
 ## Architecture

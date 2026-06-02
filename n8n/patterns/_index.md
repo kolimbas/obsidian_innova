@@ -3,7 +3,7 @@ tags:
   - n8n
   - patterns
   - nivel-2
-updated: 2026-05-28
+updated: 2026-06-02
 ---
 
 # Patterns
@@ -18,7 +18,7 @@ updated: 2026-05-28
 
 | Pattern | Problem it solves | First seen in |
 | --- | --- | --- |
-| _none yet_ |  |  |
+| [[n8n/patterns/sheet-idempotency\|Sheet-based idempotency]] | Deduplicar eventos para no repetir efectos externos (Sheet como store) | blincer · 3 flows (2026-06-02) |
 
 ---
 

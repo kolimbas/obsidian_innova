@@ -27,7 +27,7 @@ El set de operaciones del nodo cambió entre versiones y el comportamiento de `a
 ## Gotchas
 
 - ⚠️ **v4.5 NO tiene operación `lookup`** (existía en v1/v2). Un nodo con `operation: "lookup"` en v4.5 es inválido. Para buscar/deduplicar por valor: `operation: "read"` + `filtersUI.values: [{ lookupColumn, lookupValue }]`.
-- ⚠️ **`read` con filtro que no matchea devuelve 0 items** → corta la rama (no propaga el item original). Para idempotencia del tipo "seguir si NO existe" no alcanza el `read` solo: hace falta un Code que lea la tab y compare en JS, **y** un nodo de *write-back* que inserte la clave después de procesar (no viene en los esqueletos de Blincer).
+- ⚠️ **`read` con filtro que no matchea devuelve 0 items** → corta la rama (no propaga el item original). Para idempotencia del tipo "seguir si NO existe" no alcanza el `read` solo: hace falta un Code que lea la tab y compare en JS, **y** un nodo de *write-back* que inserte la clave después de procesar. Patrón completo en [[n8n/patterns/sheet-idempotency|Sheet-based idempotency]] (implementado en los 3 flows de Blincer el 2026-06-02: read `alwaysOutputData` + Code `runOnceForAllItems` + write-back).
 - **autoMap append**: si el JSON trae claves que no están como header, n8n las agrega como columnas nuevas al final (puede ensuciar la tab si los nombres varían).
 
 ## Flows using this node

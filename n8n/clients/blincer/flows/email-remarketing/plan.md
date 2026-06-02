@@ -22,6 +22,9 @@ status: blocked-by-oqs
 > [!success] Progreso 2026-06-02 — Sheets cableados
 > Backing en el spreadsheet **Blincer - Campaigns** (`1-T8VhM8B-u0RPvZfCoZO9c7B1DaFTC0Qu0ElrD9uv6c`). Tabs: `campaigns_config`, `manual_suppression`, `campaigns_log`, `campaign_queue`, `campaigns_metrics` (la `campaigns_errors` del plan **aún no**). `REPLACE_SHEET_ID` reemplazado en los 10 nodos Sheets y credencial mapeada. `Idempotency lookup` quedó **disabled** (op `lookup` inexistente en v4.5 + falta write-back — ver [[n8n/nodes/google-sheets|node note]]). El nodo `Re-trigger main workflow` ya apunta a la base real (`https://n8n.srv1512692.hstgr.cloud/webhook/blincer-campaign`) — `REPLACE_N8N_BASE` resuelto el 2026-06-02.
 
+> [!success] Progreso 2026-06-02 (dedup real + error workflow)
+> **Dedup implementada** (patrón [[n8n/patterns/sheet-idempotency|Sheet-based idempotency]]): `Idempotency lookup` ahora es un `read` de `campaigns_log` (`alwaysOutputData`) → `Dedup filter` (Code) filtra por clave `(campaign_id, contact_id)`. El **write-back es el propio `Log sent`** — el `Dedup filter` agrega `campaign_id`/`contact_id` a cada ítem para que queden registrados al loguear (no hace falta nodo aparte). Asignado **Error Workflow** `T-000`. Validado estructuralmente; sin test de runtime (falta credencial HubSpot + OQ-1 plataforma).
+
 ---
 
 ## Architecture

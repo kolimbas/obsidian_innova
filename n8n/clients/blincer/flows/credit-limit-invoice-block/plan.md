@@ -22,6 +22,9 @@ status: blocked-by-oqs
 > [!success] Progreso 2026-06-02 — Sheets cableados
 > Backing en el spreadsheet **Blincer - Credit Limit** (`1kjsp67c8eKVTqj6FoHpKI6mTtqoTFsBSUdEv9E0gPaI`). Tabs: `audit_credit_block`, `idempotency_credit` (la `errors_credit_block` del plan **aún no**). `REPLACE_SHEET_ID` reemplazado y credencial Sheets mapeada. El nodo `Idempotency lookup` quedó **disabled** (op `lookup` inexistente en googleSheets v4.5 + falta write-back — ver [[n8n/nodes/google-sheets|node note]]). Faltan todavía: stage id real (`REPLACE_STAGE_ID`), Tango y canal de alerta.
 
+> [!success] Progreso 2026-06-02 (dedup real + error workflow)
+> **Dedup implementada** (patrón [[n8n/patterns/sheet-idempotency|Sheet-based idempotency]]): `Idempotency lookup` ahora es un `read` de `idempotency_credit` (`alwaysOutputData`) → `Dedup filter` (Code) filtra por clave `eventId` (o `objectId_occurredAt`) → write-back `Idem row`→`Idem write` desde ambas ramas terminales (`Log allowed` y `Append audit (blocked)`). Asignado **Error Workflow** `T-000` (`9zlznI4wuzz6MNSX`). Validado estructuralmente; sin test de runtime (falta credencial HubSpot + OQs).
+
 ---
 
 ## Architecture (propuesta, asume rama Nexo)

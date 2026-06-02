@@ -18,6 +18,8 @@ status: blocked-by-oqs
 
 > [!success] Progreso 2026-06-02 (Sheets backing)
 > Hecho vía API n8n: spreadsheet **Blincer - Credit Limit** (`1kjsp67c8eKVTqj6FoHpKI6mTtqoTFsBSUdEv9E0gPaI`) creado con `audit_credit_block` + `idempotency_credit` (**falta** `errors_credit_block`). `REPLACE_SHEET_ID` reemplazado + credencial mapeada a `Google Sheets account`. `Idempotency lookup` quedó **disabled** (v4.5 sin op `lookup` + falta write-back). Siguen pendientes los placeholders no-Sheets: `REPLACE_STAGE_ID` (OQ-6), Tango (`REPLACE_TANGO_BASE`), alerta (`REPLACE_INTERNAL_ALERT_WEBHOOK`), credencial HubSpot real.
+>
+> **Update (dedup, mismo día):** dedup real ya implementada (`read idempotency_credit` → `Dedup filter` → write-back `Idem row`/`Idem write`) — ver plan.md y [[n8n/patterns/sheet-idempotency|pattern]]. Error Workflow `T-000` asignado.
 
 ---
 

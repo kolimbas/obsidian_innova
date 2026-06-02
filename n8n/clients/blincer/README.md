@@ -55,7 +55,8 @@ Automate Sandra's admin work (bank reconciliation, recurring invoicing, manageme
 > Los 4 skeletons ya están importados en la instancia n8n del cliente (`n8n.srv1512692.hstgr.cloud`). En los 3 flows que usan Sheets (credit-limit, whatsapp-overdue, email-remarketing) se hizo vía API:
 > - Creados los **Google Sheets backing** (ver sección siguiente) y reemplazados todos los `REPLACE_SHEET_ID` por los IDs reales.
 > - **Credencial Sheets:** se mapeó a la credencial OAuth2 existente **`Google Sheets account`** (id `NNpCFCk3F2rhlxUk`), la misma de los `BLINCER-T0xx`. El nombre `gsheets-blincer-ops` de los planes nunca llegó a existir como credencial → docs corregidos.
-> - **Idempotencia:** los 3 nodos "Idempotency lookup" quedaron **`disabled`** — la op `lookup` no existe en googleSheets v4.5 y falta el nodo de write-back (ver [[n8n/nodes/google-sheets|node note]]). Pasan datos de largo para test; dedup real pendiente.
+> - **Idempotencia:** los `Idempotency lookup` se reemplazaron por la dedup real (`read` + `Dedup filter` + write-back) en los 3 flows — patrón [[n8n/patterns/sheet-idempotency|Sheet-based idempotency]]. Detalle en cada `plan.md`.
+> - **Error Workflow** `T-000` (`9zlznI4wuzz6MNSX`) asignado a los 3 flows.
 > - Siguen `active: false`. HubSpot y Postgres siguen como placeholders (no hay credencial real en la instancia todavía).
 
 ## Backing stores — Google Sheets (2026-06-02)
