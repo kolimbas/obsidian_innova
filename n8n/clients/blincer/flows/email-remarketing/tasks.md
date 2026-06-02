@@ -15,7 +15,7 @@ status: blocked-by-oqs
 ← Volver a [[n8n/METHODOLOGY|Methodology]] · [[n8n/clients/blincer/flows/email-remarketing/plan|Plan]]
 
 > [!success] Progreso 2026-06-02 (Sheets backing)
-> Hecho vía API n8n: spreadsheet **Blincer - Campaigns** (`1-T8VhM8B-u0RPvZfCoZO9c7B1DaFTC0Qu0ElrD9uv6c`) creado con `campaigns_config`, `manual_suppression`, `campaigns_log`, `campaign_queue`, `campaigns_metrics` (columnas según skeleton; **falta** `campaigns_errors` y columnas extra del § Setup). `REPLACE_SHEET_ID` reemplazado en los 10 nodos + credencial mapeada a `Google Sheets account`. `Idempotency lookup` quedó **disabled** (v4.5 sin op `lookup` + falta write-back). ⚠️ `Re-trigger main workflow` sigue con `REPLACE_N8N_BASE` (rompe si corre el cron de cola).
+> Hecho vía API n8n: spreadsheet **Blincer - Campaigns** (`1-T8VhM8B-u0RPvZfCoZO9c7B1DaFTC0Qu0ElrD9uv6c`) creado con `campaigns_config`, `manual_suppression`, `campaigns_log`, `campaign_queue`, `campaigns_metrics` (columnas según skeleton; **falta** `campaigns_errors` y columnas extra del § Setup). `REPLACE_SHEET_ID` reemplazado en los 10 nodos + credencial mapeada a `Google Sheets account`. `Idempotency lookup` quedó **disabled** (v4.5 sin op `lookup` + falta write-back). `Re-trigger main workflow` ya apunta a `https://n8n.srv1512692.hstgr.cloud/webhook/blincer-campaign` (`REPLACE_N8N_BASE` resuelto 2026-06-02).
 
 ---
 

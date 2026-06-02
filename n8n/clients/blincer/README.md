@@ -68,8 +68,8 @@ Un spreadsheet por flow (dueño `borgonifrancisco@gmail.com`, compartidos *anyon
 | whatsapp-overdue | Blincer - Cobranzas | `12-VpWiZ2iw0QiHVast7-NOrAwASEAxOJuH4jer-Jb40` | `cobranzas_config`, `cobranzas_templates`, `cobranzas_log`, `cobranzas_fallback`, `idempotency_cobranzas` |
 | email-remarketing | Blincer - Campaigns | `1-T8VhM8B-u0RPvZfCoZO9c7B1DaFTC0Qu0ElrD9uv6c` | `campaigns_config`, `manual_suppression`, `campaigns_log`, `campaign_queue`, `campaigns_metrics` |
 
-> [!warning] Follow-up Cobranzas
-> En "Blincer - Cobranzas" la tab `cobranzas_config` quedó con el contenido de templates y `cobranzas_templates` vacía (mezcla al crear). Falta: dejar `cobranzas_config` con header `cadence_days | excluded_customers` + fila `[1,7,15,30,45,60]` / `[]`, y mover las 4 filas de template a `cobranzas_templates`.
+> [!check] Cobranzas corregida (2026-06-02)
+> El mix-up inicial entre `cobranzas_config` y `cobranzas_templates` se arregló: `cobranzas_config` quedó con `cadence_days | excluded_customers` + fila `[1,7,15,30,45,60]` / `[]`, y `cobranzas_templates` con sus 4 filas de plantilla. Verificado.
 
 ## Open dependencies
 

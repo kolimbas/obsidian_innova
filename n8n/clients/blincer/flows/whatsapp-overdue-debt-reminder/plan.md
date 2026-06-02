@@ -20,7 +20,7 @@ status: blocked-by-oqs
 > `workflow.json` construido a mano. Nodos **disabled**: `Fetch overdue invoices (Tango)`, `Re-validate balance (Tango)` (OQ-4/OQ-G1) y `Send WhatsApp` (OQ-1/OQ-G2 + opt-in OQ-2). Gate duro: no habilitar `Send WhatsApp` sin opt-in documentado. `active: false`.
 
 > [!success] Progreso 2026-06-02 — Sheets cableados
-> Backing en el spreadsheet **Blincer - Cobranzas** (`12-VpWiZ2iw0QiHVast7-NOrAwASEAxOJuH4jer-Jb40`). Tabs creadas: `cobranzas_config`, `cobranzas_templates`, `cobranzas_log`, `cobranzas_fallback`, `idempotency_cobranzas` (columnas según el skeleton — `cobranzas_errors`/`cobranzas_metrics` y columnas extra del plan **aún no**). `REPLACE_SHEET_ID` reemplazado y credencial mapeada. `Idempotency lookup` quedó **disabled** (op `lookup` inexistente en googleSheets v4.5 + falta write-back — ver [[n8n/nodes/google-sheets|node note]]). Pendiente fix tab `cobranzas_config`/`cobranzas_templates` (se mezclaron al crear).
+> Backing en el spreadsheet **Blincer - Cobranzas** (`12-VpWiZ2iw0QiHVast7-NOrAwASEAxOJuH4jer-Jb40`). Tabs creadas: `cobranzas_config`, `cobranzas_templates`, `cobranzas_log`, `cobranzas_fallback`, `idempotency_cobranzas` (columnas según el skeleton — `cobranzas_errors`/`cobranzas_metrics` y columnas extra del plan **aún no**). `REPLACE_SHEET_ID` reemplazado y credencial mapeada. `Idempotency lookup` quedó **disabled** (op `lookup` inexistente en googleSheets v4.5 + falta write-back — ver [[n8n/nodes/google-sheets|node note]]). (Las tabs `cobranzas_config`/`cobranzas_templates` se habían mezclado al crear y se corrigieron el 2026-06-02.)
 
 ---
 
