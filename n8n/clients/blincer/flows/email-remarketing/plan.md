@@ -25,6 +25,9 @@ status: blocked-by-oqs
 > [!success] Progreso 2026-06-02 (dedup real + error workflow)
 > **Dedup implementada** (patrón [[n8n/patterns/sheet-idempotency|Sheet-based idempotency]]): `Idempotency lookup` ahora es un `read` de `campaigns_log` (`alwaysOutputData`) → `Dedup filter` (Code) filtra por clave `(campaign_id, contact_id)`. El **write-back es el propio `Log sent`** — el `Dedup filter` agrega `campaign_id`/`contact_id` a cada ítem para que queden registrados al loguear (no hace falta nodo aparte). Asignado **Error Workflow** `T-000`. Validado estructuralmente; sin test de runtime (falta credencial HubSpot + OQ-1 plataforma).
 
+> [!success] Progreso 2026-06-02 (HubSpot)
+> Credencial **`hubspot-blincer-apptoken`** (App Token, id `A3JekIL652cjutl4`) enganchada a `Resolve segment`, `Update HubSpot Contact`, `Get bounces & unsubs (24h)` y `Add to do_not_email` (`authentication: appToken`). `Send via platform` queda **disabled** sin credencial (OQ-1 plataforma). ⚠️ **El token provisto fue rechazado por HubSpot** ("expiresAt: 0" → truncado/revocado): pegar un Private App token válido en la credencial desde la UI. **Pendiente con token vivo:** resolver `REPLACE_DO_NOT_EMAIL_LIST_ID` (la lista `do_not_email` se busca con `GET /contacts/v1/lists`; si no existe hay que crearla en HubSpot).
+
 ---
 
 ## Architecture

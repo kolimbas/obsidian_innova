@@ -25,6 +25,11 @@ status: blocked-by-oqs
 > [!success] Progreso 2026-06-02 (dedup real + error workflow)
 > **Dedup implementada** (patrón [[n8n/patterns/sheet-idempotency|Sheet-based idempotency]]): `Idempotency lookup` ahora es un `read` de `idempotency_credit` (`alwaysOutputData`) → `Dedup filter` (Code) filtra por clave `eventId` (o `objectId_occurredAt`) → write-back `Idem row`→`Idem write` desde ambas ramas terminales (`Log allowed` y `Append audit (blocked)`). Asignado **Error Workflow** `T-000` (`9zlznI4wuzz6MNSX`). Validado estructuralmente; sin test de runtime (falta credencial HubSpot + OQs).
 
+> [!success] Progreso 2026-06-02 (HubSpot + disparo por webhook)
+> - **Trigger migrado:** se eliminó `HubSpot Deal Trigger` (developer API) y se reemplazó por nodo **Webhook** (`POST /webhook/blincer-credit-limit`) + **`Normalize webhook`** (Code) que mapea el body de HubSpot a los campos canónicos (`objectId`, `propertyValue`, `eventId`, `occurredAt`) — patrón [[n8n/patterns/hubspot-workflow-webhook-trigger|HubSpot Workflow → n8n Webhook]]. `Get Deal` ya referencia `$('Normalize webhook')`. **Falta del lado HubSpot:** crear un Workflow nativo "Deal entra a *Listo para facturar* → Send webhook (POST)" a esa URL.
+> - **Credencial HubSpot:** creada `hubspot-blincer-apptoken` (tipo App Token, id `A3JekIL652cjutl4`) y enganchada a los 5 nodos de acción (`authentication: appToken`). ⚠️ **El token provisto fue rechazado por HubSpot** ("OAuth token expired / expiresAt: 0" → truncado o revocado): pegar un **Private App token válido** en esa credencial desde la UI de n8n para que funcione.
+> - **Sigue pendiente** (necesita token vivo): resolver `REPLACE_STAGE_ID_listo_para_facturar` y el stage "Bloqueado por deuda" (se leen de `GET /crm/v3/pipelines/deals`). Tango y alerta interna siguen igual.
+
 ---
 
 ## Architecture (propuesta, asume rama Nexo)
@@ -53,7 +58,7 @@ flowchart LR
 
 | # | Node | Type | Purpose | Key params | On error |
 | --- | --- | --- | --- | --- | --- |
-| 1 | `HubSpot Deal Trigger` | `n8n-nodes-base.hubspotTrigger` | Recibir `deal.propertyChange` filtrado por `propertyName=dealstage` | event, propertyName, app credential | n/a (trigger) |
+| 1 | `Webhook (HubSpot)` + `Normalize webhook` | `webhook` + `code` | Recibir POST de un HubSpot Workflow ("Deal → Listo para facturar") y normalizar a `objectId`/`propertyValue`/`eventId`/`occurredAt` (reemplazó al `hubspotTrigger`, ver [[n8n/patterns/hubspot-workflow-webhook-trigger\|pattern]]) | path `blincer-credit-limit` | n/a (trigger) |
 | 2 | `Filter stage` | `n8n-nodes-base.if` | Continuar solo si `propertyValue` == stage "Listo para facturar" | condition con stage id (a resolver post-OQ-6) | route to End |
 | 3 | `Idempotency check` | `n8n-nodes-base.googleSheets` o `n8n-nodes-base.postgres` (decidir en build) | Lookup por `eventId + occurredAt` para descartar reentregas | sheet/table `idempotency_credit_block` | si lookup falla → log + reintentar |
 | 4 | `Get Deal` | `n8n-nodes-base.hubspot` | Fetch deal + associations company | resource=deal, operation=get, includeAssociations=true | retry 3× con backoff exponencial; si persiste → error branch |
@@ -91,7 +96,7 @@ flowchart LR
 
 | Credential | n8n credential name | Stored in | Owner |
 | --- | --- | --- | --- |
-| HubSpot Private App | `hubspot-blincer-main` (a crear — hoy placeholder) | n8n credentials | Innova (token rotable) |
+| HubSpot Private App | **`hubspot-blincer-apptoken`** (id `A3JekIL652cjutl4`, tipo App Token) — creada y enganchada; ⚠️ token provisto rechazado, pegar uno válido | n8n credentials | Innova (token rotable) |
 | Tango Nexo API | `tango-nexo-blincer` (si aplica, a crear) | n8n credentials | Innova (delegado por Sandra) |
 | Google Sheets (audit) | **`Google Sheets account`** (`NNpCFCk3F2rhlxUk`, reusa la de BLINCER-T0xx) | n8n credentials | Innova |
 | Canal alerta interna | `internal-alert-blincer` (a crear) | n8n credentials | depende de OQ-G7 |

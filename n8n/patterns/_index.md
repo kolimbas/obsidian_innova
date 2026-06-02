@@ -19,6 +19,7 @@ updated: 2026-06-02
 | Pattern | Problem it solves | First seen in |
 | --- | --- | --- |
 | [[n8n/patterns/sheet-idempotency\|Sheet-based idempotency]] | Deduplicar eventos para no repetir efectos externos (Sheet como store) | blincer · 3 flows (2026-06-02) |
+| [[n8n/patterns/hubspot-workflow-webhook-trigger\|HubSpot Workflow → n8n Webhook]] | Disparar n8n ante cambios en HubSpot sin montar la developer app (App ID) | blincer · credit-limit (2026-06-02) |
 
 ---
 

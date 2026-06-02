@@ -43,7 +43,7 @@ Automate Sandra's admin work (bank reconciliation, recurring invoicing, manageme
 
 | Flow | Status | Trigger | Last update |
 | --- | --- | --- | --- |
-| [[n8n/clients/blincer/flows/credit-limit-invoice-block/spec\|Bloqueo facturación por deuda]] | skeleton + Sheets backing wired (OQ nodes disabled) | HubSpot Deal stage change | 2026-06-02 |
+| [[n8n/clients/blincer/flows/credit-limit-invoice-block/spec\|Bloqueo facturación por deuda]] | skeleton + Sheets + HubSpot cred wired (OQ nodes disabled) | Webhook ← HubSpot Workflow | 2026-06-02 |
 | [[n8n/clients/blincer/flows/whatsapp-overdue-debt-reminder/spec\|Avisos deuda vencida WhatsApp]] | skeleton + Sheets backing wired (OQ nodes disabled) | Cron diario 09:00 ART | 2026-06-02 |
 | [[n8n/clients/blincer/flows/sales-bot-with-quotes/spec\|Bot ventas + cotizaciones/facturas]] | skeleton built (OQ nodes disabled) · usa Postgres, no Sheets | WhatsApp inbound webhook | 2026-05-31 |
 | [[n8n/clients/blincer/flows/email-remarketing/spec\|Remarketing y difusiones email]] | skeleton + Sheets backing wired (OQ nodes disabled) | Manual HubSpot + cron nurturing | 2026-06-02 |
@@ -57,7 +57,11 @@ Automate Sandra's admin work (bank reconciliation, recurring invoicing, manageme
 > - **Credencial Sheets:** se mapeó a la credencial OAuth2 existente **`Google Sheets account`** (id `NNpCFCk3F2rhlxUk`), la misma de los `BLINCER-T0xx`. El nombre `gsheets-blincer-ops` de los planes nunca llegó a existir como credencial → docs corregidos.
 > - **Idempotencia:** los `Idempotency lookup` se reemplazaron por la dedup real (`read` + `Dedup filter` + write-back) en los 3 flows — patrón [[n8n/patterns/sheet-idempotency|Sheet-based idempotency]]. Detalle en cada `plan.md`.
 > - **Error Workflow** `T-000` (`9zlznI4wuzz6MNSX`) asignado a los 3 flows.
-> - Siguen `active: false`. HubSpot y Postgres siguen como placeholders (no hay credencial real en la instancia todavía).
+> - Siguen `active: false`.
+
+> [!warning] HubSpot 2026-06-02 — credencial creada y cableada, token PENDIENTE
+> Se creó la credencial **`hubspot-blincer-apptoken`** (tipo *App Token*, id `A3JekIL652cjutl4`) y se enganchó a **los 11 nodos de acción HubSpot** de los 3 flows (`authentication: appToken`; `Send via platform` de email queda disabled aparte por OQ-1). El **token provisto por el cliente fue rechazado por HubSpot** (`expiresAt: 0` / "OAuth token expired" → truncado o revocado, no realmente expirado). **Acción única pendiente:** pegar un **Private App token válido** en esa credencial desde la UI de n8n; con eso quedan operativas las llamadas HubSpot sin tocar nodos.
+> Además: **credit-limit** migró de `hubspotTrigger` (developer API) a **Webhook** (`/webhook/blincer-credit-limit`) + `Normalize webhook` — ver [[n8n/patterns/hubspot-workflow-webhook-trigger|pattern]]; falta crear el Workflow nativo en HubSpot que pegue a esa URL. Con token vivo quedan por resolver: stage IDs de credit-limit y la lista `do_not_email` de email. La **Developer API Key** que pasó el cliente quedó **sin uso** (este camino no la necesita). Postgres (sales-bot) sigue placeholder.
 
 ## Backing stores — Google Sheets (2026-06-02)
 

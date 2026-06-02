@@ -18,6 +18,7 @@ updated: 2026-06-02
 
 | Date | Client / flow | Takeaway |
 | --- | --- | --- |
+| 2026-06-02 | blincer · credit-limit (HubSpot wiring) | El HubSpot Trigger de n8n exige developer app + App ID (la Developer API Key sola no alcanza); para un disparo simple conviene HubSpot Workflow → Webhook + `Normalize`. Ver [[n8n/patterns/hubspot-workflow-webhook-trigger\|pattern]]. Además: los tokens de HubSpot que dan error "OAuth token expired / expiresAt: 0" suelen estar **truncados o revocados**, no realmente expirados. |
 | 2026-06-02 | blincer · 3 flows Sheets (build) | googleSheets v4.5 no tiene op `lookup`; la idempotencia por Sheet necesita `read`+filtro **y** un nodo de write-back (no viene en el esqueleto). Ver [[n8n/nodes/google-sheets\|node note]]. |
 
 ---

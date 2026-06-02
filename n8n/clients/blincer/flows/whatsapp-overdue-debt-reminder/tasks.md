@@ -17,6 +17,8 @@ status: blocked-by-oqs
 > [!success] Progreso 2026-06-02 (Sheets backing)
 > Hecho vía API n8n: spreadsheet **Blincer - Cobranzas** (`12-VpWiZ2iw0QiHVast7-NOrAwASEAxOJuH4jer-Jb40`) creado con `cobranzas_config`, `cobranzas_templates`, `cobranzas_log`, `cobranzas_fallback`, `idempotency_cobranzas` (columnas según skeleton; **faltan** `cobranzas_errors`, `cobranzas_metrics` y columnas extra del § Setup). `REPLACE_SHEET_ID` reemplazado + credencial mapeada a `Google Sheets account`. `Idempotency lookup` quedó **disabled** (v4.5 sin op `lookup` + falta write-back).
 > Follow-ups: (1) ~~arreglar tabs `cobranzas_config`/`cobranzas_templates`~~ ✅ corregido 2026-06-02; (2) crear `cobranzas_errors`/`cobranzas_metrics`; (3) ~~cablear dedup real~~ ✅ implementada 2026-06-02 (`read idempotency_cobranzas` → `Dedup filter` por `(invoice_id, cadence_day)` → write-back desde `Log sent`; ver [[n8n/patterns/sheet-idempotency|pattern]]). Error Workflow `T-000` asignado.
+>
+> **Update (HubSpot, mismo día):** credencial `hubspot-blincer-apptoken` (App Token, id `A3JekIL652cjutl4`) enganchada a `Get Contact` y `Update HubSpot` (`authentication: appToken`). ⚠️ token provisto **rechazado** por HubSpot (truncado/revocado) → pegar un Private App token válido en la credencial.
 
 ---
 

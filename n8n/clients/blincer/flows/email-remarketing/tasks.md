@@ -18,6 +18,8 @@ status: blocked-by-oqs
 > Hecho vía API n8n: spreadsheet **Blincer - Campaigns** (`1-T8VhM8B-u0RPvZfCoZO9c7B1DaFTC0Qu0ElrD9uv6c`) creado con `campaigns_config`, `manual_suppression`, `campaigns_log`, `campaign_queue`, `campaigns_metrics` (columnas según skeleton; **falta** `campaigns_errors` y columnas extra del § Setup). `REPLACE_SHEET_ID` reemplazado en los 10 nodos + credencial mapeada a `Google Sheets account`. `Idempotency lookup` quedó **disabled** (v4.5 sin op `lookup` + falta write-back). `Re-trigger main workflow` ya apunta a `https://n8n.srv1512692.hstgr.cloud/webhook/blincer-campaign` (`REPLACE_N8N_BASE` resuelto 2026-06-02).
 >
 > **Update (dedup, mismo día):** dedup real ya implementada (`read campaigns_log` → `Dedup filter` por `(campaign_id, contact_id)`; write-back vía el propio `Log sent`) — ver plan.md y [[n8n/patterns/sheet-idempotency|pattern]]. Error Workflow `T-000` asignado.
+>
+> **Update (HubSpot, mismo día):** credencial `hubspot-blincer-apptoken` (App Token, id `A3JekIL652cjutl4`) enganchada a `Resolve segment`, `Update HubSpot Contact`, `Get bounces & unsubs (24h)` y `Add to do_not_email` (`authentication: appToken`); `Send via platform` queda disabled sin credencial (OQ-1). ⚠️ token provisto **rechazado** por HubSpot → pegar un Private App token válido. Pendiente con token vivo: resolver `REPLACE_DO_NOT_EMAIL_LIST_ID`.
 
 ---
 
