@@ -4,9 +4,9 @@ tags:
   - cliente
   - activo
   - nivel-2
-estado: en-correcciones
-fase: 4
-updated: 2026-05-10
+estado: entregado
+fase: 9
+updated: 2026-06-10
 ---
 
 # ESTUDIO TRUJILLO ABOGADOS
@@ -37,12 +37,12 @@ updated: 2026-05-10
 
 ## Estado del proyecto
 
-> [!success] Aprobado
-> Estructura general del sitio aprobada por el cliente en primera revisión.
+> [!success] Deployado y entregado (2026-06-10)
+> Sitio en producción. Estructura aprobada, correcciones visuales finales OK, integración Supabase y deploy en Vercel completos.
 
 > [!todo] Pendientes
 > - [x] Reemplazar imágenes generadas por Lovable con las 3 fotos propias del cliente
-> - [ ] Aprobar correcciones visuales finales
+> - [x] Aprobar correcciones visuales finales
 > - [x] Confirmar dominio
 > - [x] Fase 6 — Integración Claude Code + Supabase
 > - [x] Deploy en Vercel

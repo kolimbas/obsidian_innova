@@ -5,7 +5,7 @@ tags:
   - nivel-3
 client: blincer
 status: pre-sales
-updated: 2026-06-02
+updated: 2026-06-10
 ---
 
 # Blincer — n8n Workspace
@@ -59,9 +59,9 @@ Automate Sandra's admin work (bank reconciliation, recurring invoicing, manageme
 > - **Error Workflow** `T-000` (`9zlznI4wuzz6MNSX`) asignado a los 3 flows.
 > - Siguen `active: false`.
 
-> [!warning] HubSpot 2026-06-02 — credencial creada y cableada, token PENDIENTE
-> Se creó la credencial **`hubspot-blincer-apptoken`** (tipo *App Token*, id `A3JekIL652cjutl4`) y se enganchó a **los 11 nodos de acción HubSpot** de los 3 flows (`authentication: appToken`; `Send via platform` de email queda disabled aparte por OQ-1). El **token provisto por el cliente fue rechazado por HubSpot** (`expiresAt: 0` / "OAuth token expired" → truncado o revocado, no realmente expirado). **Acción única pendiente:** pegar un **Private App token válido** en esa credencial desde la UI de n8n; con eso quedan operativas las llamadas HubSpot sin tocar nodos.
-> Además: **credit-limit** migró de `hubspotTrigger` (developer API) a **Webhook** (`/webhook/blincer-credit-limit`) + `Normalize webhook` — ver [[n8n/patterns/hubspot-workflow-webhook-trigger|pattern]]; falta crear el Workflow nativo en HubSpot que pegue a esa URL. Con token vivo quedan por resolver: stage IDs de credit-limit y la lista `do_not_email` de email. La **Developer API Key** que pasó el cliente quedó **sin uso** (este camino no la necesita). Postgres (sales-bot) sigue placeholder.
+> [!success] HubSpot 2026-06-10 — credencial cableada y token OPERATIVO
+> Se creó la credencial **`hubspot-blincer-apptoken`** (tipo *App Token*, id `A3JekIL652cjutl4`) y se enganchó a **los 11 nodos de acción HubSpot** de los 3 flows (`authentication: appToken`; `Send via platform` de email queda disabled aparte por OQ-1). **El Private App token válido ya está cargado en la credencial (2026-06-10)** — las llamadas HubSpot quedan operativas sin tocar nodos.
+> Además: **credit-limit** migró de `hubspotTrigger` (developer API) a **Webhook** (`/webhook/blincer-credit-limit`) + `Normalize webhook` — ver [[n8n/patterns/hubspot-workflow-webhook-trigger|pattern]]; **resta del lado HubSpot** crear el Workflow nativo que pegue a esa URL. Ya con el token vivo, quedan por resolver: stage IDs de credit-limit y la lista `do_not_email` de email. La **Developer API Key** que pasó el cliente quedó **sin uso** (este camino no la necesita). Postgres (sales-bot) sigue placeholder.
 
 ## Backing stores — Google Sheets (2026-06-02)
 

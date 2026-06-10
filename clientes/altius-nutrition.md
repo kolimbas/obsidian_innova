@@ -4,9 +4,9 @@ tags:
   - cliente
   - activo
   - nivel-2
-estado: en-correcciones
-fase: 4
-updated: 2026-05-10
+estado: listo-para-deploy
+fase: 8
+updated: 2026-06-10
 ---
 
 # ALTIUS NUTRITION
@@ -69,12 +69,12 @@ updated: 2026-05-10
 > El código base que generó Lovable es de alta calidad: React + TanStack Router, 6 páginas, Framer Motion, Lenis scroll, copy de marca correcto, footer con datos reales del cliente.
 
 > [!todo] Pendientes
-> - [ ] Aplicar correcciones v2 en Lovable (tipografía + fondo blanco + dorado)
-> - [ ] Cliente sube fotos reales de productos (N+ PRIME · FOCUS · RECOVERY)
-> - [ ] Reemplazar 6 productos inventados por los 3 reales
-> - [ ] Definir precios
-> - [ ] Fase 6 — Integración Claude Code + Supabase
-> - [ ] Deploy en altiusnutrition.pro
+> - [x] Aplicar correcciones v2 en Lovable (tipografía + fondo blanco + dorado)
+> - [x] Cliente sube fotos reales de productos (N+ PRIME · FOCUS · RECOVERY)
+> - [x] Reemplazar 6 productos inventados por los 3 reales
+> - [x] Definir precios
+> - [x] Fase 6 — Integración Claude Code + Supabase
+> - [ ] **Deploy en altiusnutrition.pro** ← único pendiente
 
 ---
 

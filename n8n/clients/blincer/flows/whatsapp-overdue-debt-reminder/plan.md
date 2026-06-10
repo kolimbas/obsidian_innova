@@ -6,7 +6,7 @@ tags:
   - nivel-3
 client: blincer
 flow: whatsapp-overdue-debt-reminder
-updated: 2026-06-02
+updated: 2026-06-10
 status: blocked-by-oqs
 ---
 
@@ -26,7 +26,7 @@ status: blocked-by-oqs
 > **Dedup implementada** (patrón [[n8n/patterns/sheet-idempotency|Sheet-based idempotency]]): `Idempotency lookup` ahora es un `read` de `idempotency_cobranzas` (`alwaysOutputData`) → `Dedup filter` (Code) filtra por clave `(invoice_id, cadence_day)` → write-back `Idem row`→`Idem write` (fan-out desde `Log sent`, una fila por factura enviada). Asignado **Error Workflow** `T-000`. Validado estructuralmente; sin test de runtime (falta credencial HubSpot/WhatsApp + OQs).
 
 > [!success] Progreso 2026-06-02 (HubSpot)
-> Credencial **`hubspot-blincer-apptoken`** (App Token, id `A3JekIL652cjutl4`) enganchada a `Get Contact` y `Update HubSpot` (`authentication: appToken`). ⚠️ **El token provisto fue rechazado por HubSpot** ("expiresAt: 0" → truncado/revocado): pegar un Private App token válido en esa credencial desde la UI. Este flow no usa trigger de HubSpot (es cron), así que con el token vivo + provider WhatsApp + opt-in queda listo para testear la parte HubSpot.
+> Credencial **`hubspot-blincer-apptoken`** (App Token, id `A3JekIL652cjutl4`) enganchada a `Get Contact` y `Update HubSpot` (`authentication: appToken`). ✅ **Private App token válido cargado (2026-06-10)** — la parte HubSpot queda operativa. Este flow no usa trigger de HubSpot (es cron), así que resta el provider WhatsApp + opt-in para testear punta a punta.
 
 ---
 

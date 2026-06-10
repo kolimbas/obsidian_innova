@@ -4,7 +4,7 @@ tags:
   - clientes
   - hub
   - nivel-1
-updated: 2026-05-20
+updated: 2026-06-10
 ---
 
 # 👥 Clientes
@@ -19,8 +19,8 @@ updated: 2026-05-20
 
 | Cliente | Tipo | Estado | Fase |
 | --- | --- | --- | --- |
-| [[clientes/trujillo-abogados\|Estudio Trujillo Abogados]] | 🌐 Web | 🟡 En correcciones | 4 |
-| [[clientes/altius-nutrition\|ALTIUS NUTRITION]] | 🌐 Web | 🟡 En correcciones v2 | 4 |
+| [[clientes/trujillo-abogados\|Estudio Trujillo Abogados]] | 🌐 Web | 🟢 Deployado | 9 |
+| [[clientes/altius-nutrition\|ALTIUS NUTRITION]] | 🌐 Web | 🟡 Listo para deploy | 8 |
 | [[clientes/blincer\|Blincer]] | ⚙️ Automatización | 🔵 Pre-venta | 0 |
 
 ---

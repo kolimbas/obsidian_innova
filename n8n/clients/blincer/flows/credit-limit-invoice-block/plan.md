@@ -6,7 +6,7 @@ tags:
   - nivel-3
 client: blincer
 flow: credit-limit-invoice-block
-updated: 2026-06-02
+updated: 2026-06-10
 status: blocked-by-oqs
 ---
 
@@ -27,7 +27,7 @@ status: blocked-by-oqs
 
 > [!success] Progreso 2026-06-02 (HubSpot + disparo por webhook)
 > - **Trigger migrado:** se eliminó `HubSpot Deal Trigger` (developer API) y se reemplazó por nodo **Webhook** (`POST /webhook/blincer-credit-limit`) + **`Normalize webhook`** (Code) que mapea el body de HubSpot a los campos canónicos (`objectId`, `propertyValue`, `eventId`, `occurredAt`) — patrón [[n8n/patterns/hubspot-workflow-webhook-trigger|HubSpot Workflow → n8n Webhook]]. `Get Deal` ya referencia `$('Normalize webhook')`. **Falta del lado HubSpot:** crear un Workflow nativo "Deal entra a *Listo para facturar* → Send webhook (POST)" a esa URL.
-> - **Credencial HubSpot:** creada `hubspot-blincer-apptoken` (tipo App Token, id `A3JekIL652cjutl4`) y enganchada a los 5 nodos de acción (`authentication: appToken`). ⚠️ **El token provisto fue rechazado por HubSpot** ("OAuth token expired / expiresAt: 0" → truncado o revocado): pegar un **Private App token válido** en esa credencial desde la UI de n8n para que funcione.
+> - **Credencial HubSpot:** creada `hubspot-blincer-apptoken` (tipo App Token, id `A3JekIL652cjutl4`) y enganchada a los 5 nodos de acción (`authentication: appToken`). ✅ **Private App token válido cargado (2026-06-10)** — las llamadas HubSpot quedan operativas.
 > - **Sigue pendiente** (necesita token vivo): resolver `REPLACE_STAGE_ID_listo_para_facturar` y el stage "Bloqueado por deuda" (se leen de `GET /crm/v3/pipelines/deals`). Tango y alerta interna siguen igual.
 
 ---
@@ -96,7 +96,7 @@ flowchart LR
 
 | Credential | n8n credential name | Stored in | Owner |
 | --- | --- | --- | --- |
-| HubSpot Private App | **`hubspot-blincer-apptoken`** (id `A3JekIL652cjutl4`, tipo App Token) — creada y enganchada; ⚠️ token provisto rechazado, pegar uno válido | n8n credentials | Innova (token rotable) |
+| HubSpot Private App | **`hubspot-blincer-apptoken`** (id `A3JekIL652cjutl4`, tipo App Token) — creada, enganchada y ✅ token válido cargado (2026-06-10) | n8n credentials | Innova (token rotable) |
 | Tango Nexo API | `tango-nexo-blincer` (si aplica, a crear) | n8n credentials | Innova (delegado por Sandra) |
 | Google Sheets (audit) | **`Google Sheets account`** (`NNpCFCk3F2rhlxUk`, reusa la de BLINCER-T0xx) | n8n credentials | Innova |
 | Canal alerta interna | `internal-alert-blincer` (a crear) | n8n credentials | depende de OQ-G7 |

@@ -3,7 +3,7 @@ tags:
   - innova
   - master
   - nivel-0
-updated: 2026-05-10
+updated: 2026-06-10
 ---
 
 # 🏢 INNOVA SOLUTIONS
@@ -72,8 +72,8 @@ Cada cliente tiene un `CLIENT_ID` que conecta su sitio con su contenido en Supab
 
 | Cliente | Tipo | Estado | Fase |
 | --- | --- | --- | --- |
-| Estudio Trujillo Abogados | 🌐 Web | 🟡 En correcciones | 4 |
-| ALTIUS NUTRITION | 🌐 Web | 🟡 En correcciones v2 | 4 |
+| Estudio Trujillo Abogados | 🌐 Web | 🟢 Deployado | 9 |
+| ALTIUS NUTRITION | 🌐 Web | 🟡 Listo para deploy | 8 |
 | Blincer | ⚙️ Automatización | 🔵 Pre-venta | 0 |
 
 ---
@@ -101,8 +101,8 @@ Cada cliente tiene un `CLIENT_ID` que conecta su sitio con su contenido en Supab
 
 > [!todo] Por resolver
 > - [ ] Discord INNOVA WEBS — crear canales y categorías (script Node.js pendiente)
-> - [ ] Trujillo — aprobación final y deploy
-> - [ ] Altius — correcciones v2 + fotos reales de productos
+> - [x] Trujillo — aprobación final y deploy
+> - [ ] Altius — deploy final en altiusnutrition.pro
 > - [ ] Conectar Lovable MCP en Claude Code
 
 ---
