@@ -3,7 +3,7 @@ tags:
   - n8n
   - clients
   - nivel-2
-updated: 2026-05-29
+updated: 2026-06-10
 ---
 
 # Clients — n8n Flows
@@ -20,6 +20,7 @@ updated: 2026-05-29
 | --- | --- | --- | --- |
 | [[n8n/clients/blincer/README\|Blincer]] | pre-sales | 4 | Lock factory · stack Tango + HubSpot · 4 bundles draft (2026-05-29) |
 | [[n8n/clients/gaab/README\|GAAB]] | pre-info | 0 | Lockfactory hermana de Blincer · esperando detalle de Productos estancados de Gabriel |
+| [[n8n/clients/gpt-landings/README\|GPT Landings]] | pre-sales | 8 | Private lender hipotecas South Florida · VPS propio + Supabase/Postgres + Claude + Drive + e-sign + WhatsApp · 8 bundles draft (M0..G), F carve-out condicional (2026-06-10) |
 
 > Mirror of the broader client list lives in `clientes/clientes.md` (Spanish, business context). This index only tracks clients that have or will have n8n work.
 

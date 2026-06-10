@@ -75,6 +75,7 @@ Cada cliente tiene un `CLIENT_ID` que conecta su sitio con su contenido en Supab
 | Estudio Trujillo Abogados | 🌐 Web | 🟢 Deployado | 9 |
 | ALTIUS NUTRITION | 🌐 Web | 🟡 Listo para deploy | 8 |
 | Blincer | ⚙️ Automatización | 🔵 Pre-venta | 0 |
+| GPT Landings | ⚙️ Automatización | 🔵 Pre-venta | 1 |
 
 ---
 

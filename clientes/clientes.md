@@ -22,6 +22,7 @@ updated: 2026-06-10
 | [[clientes/trujillo-abogados\|Estudio Trujillo Abogados]] | 🌐 Web | 🟢 Deployado | 9 |
 | [[clientes/altius-nutrition\|ALTIUS NUTRITION]] | 🌐 Web | 🟡 Listo para deploy | 8 |
 | [[clientes/blincer\|Blincer]] | ⚙️ Automatización | 🔵 Pre-venta | 0 |
+| [[clientes/gpt-landings\|GPT Landings]] | ⚙️ Automatización | 🔵 Pre-venta | 1 |
 
 ---
 
