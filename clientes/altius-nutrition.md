@@ -92,3 +92,6 @@ updated: 2026-06-10
 - Tipografía: **Cormorant Garamond** (títulos) + **Manrope** (cuerpo)
 - Tercer color: **dorado ALTIUS** en líneas, tags, acentos
 - Referencia visual: PROXEN FITNESS (blanco + negro + acento fuerte)
+
+## Capturado por bot
+- [ ] pushear cambios (bot 11/06/2026)
