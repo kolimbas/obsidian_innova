@@ -25,7 +25,7 @@ Give Francisco a daily push (and on-demand answers) over Telegram about what's p
 ## Trigger
 
 - **Daily push:** cron `0 8 * * *` (tz America/Argentina/Buenos_Aires) → workflow `c4sCjnMYbPV7TcH3`.
-- **On-demand:** Telegram Trigger (webhook) → workflow `PIrXkj0OwdDLRRwH`. Commands: `/pendientes` (todo), or a client/keyword (`blincer`, `gpt-landings`) to filter.
+- **On-demand:** Telegram Trigger (webhook) → workflow `PIrXkj0OwdDLRRwH`. Commands: `/pendientes` (todo) · `clientes` (roster: cantidad + lista de clientes por tipo/estado/fase, con GAAB como prospecto n8n) · un cliente/keyword (`blincer`, `gpt-landings`) para filtrar pendientes.
 
 ## Inputs
 
