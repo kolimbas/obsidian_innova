@@ -126,3 +126,6 @@ Coordinación inter-áreas · Criterio contable · Relación con socios y Estudi
 | Resistencia al cambio del equipo | Medio | Capacitación bien estructurada en Fase 4 |
 | Operaciones de exportación sensibles | Medio | Workflows idempotentes con manejo robusto de errores |
 | Credenciales bancarias | Medio | Vault seguro (Doppler o Bitwarden Secrets) |
+
+## Capturado por bot
+- [ ] confirmar acceso tango (bot 11/06/2026)
