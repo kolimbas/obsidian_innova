@@ -27,7 +27,7 @@ Automate Sandra's admin work (bank reconciliation, recurring invoicing, manageme
 | System | Use | Integration risk |
 | --- | --- | --- |
 | **HubSpot (Pro+)** | CRM, Deals, Marketing Email, Workflows API | Native node + REST · webhooks habilitados |
-| Tango Gestión (version TBC) | ERP, facturación, cuenta corriente | **High** if local-only (no API) → CSV / RPA |
+| **Tango Gestión LOCAL** (server on-prem, SQL Server 2019) | ERP, facturación, cuenta corriente | **Resuelto** → SQL Server **read-only** + túnel · ver [[n8n/clients/blincer/tango-integration\|Tango integration]] |
 | Galicia · BBVA · Cooperativa | Banking | Usually scrape or CSV import |
 | Gmail · Google Drive · Google Sheets | Docs / ops | Native n8n nodes |
 | Mailchimp · Metricool · Google Ads | Marketing (legacy — evaluar reemplazo por HubSpot Marketing) | Native nodes / REST |
@@ -37,7 +37,8 @@ Automate Sandra's admin work (bank reconciliation, recurring invoicing, manageme
 
 - All credentials live in n8n's credential store, never in node parameters or env vars in plaintext.
 - Bank credentials owner: Sandra (until handoff).
-- Secrets vault for non-n8n secrets: TBD (Doppler vs Bitwarden Secrets — decide before Phase 1).
+- Secrets vault for non-n8n secrets: por ahora `accesos.md` (en la raíz del vault, fuera de n8n). Migrar a **Bitwarden / Doppler** antes de Fase 1.
+- **Tango (2026-06-12):** acceso por SQL Server con usuario de solo-lectura `blincer_n8n_ro`. Credenciales completas (app Tango, SQL, server) en `accesos.md`. Detalle de integración: [[n8n/clients/blincer/tango-integration|Tango integration]].
 
 ## Flows
 
@@ -63,6 +64,9 @@ Automate Sandra's admin work (bank reconciliation, recurring invoicing, manageme
 > Se creó la credencial **`hubspot-blincer-apptoken`** (tipo *App Token*, id `A3JekIL652cjutl4`) y se enganchó a **los 11 nodos de acción HubSpot** de los 3 flows (`authentication: appToken`; `Send via platform` de email queda disabled aparte por OQ-1). **El Private App token válido ya está cargado en la credencial (2026-06-10)** — las llamadas HubSpot quedan operativas sin tocar nodos.
 > Además: **credit-limit** migró de `hubspotTrigger` (developer API) a **Webhook** (`/webhook/blincer-credit-limit`) + `Normalize webhook` — ver [[n8n/patterns/hubspot-workflow-webhook-trigger|pattern]]; **resta del lado HubSpot** crear el Workflow nativo que pegue a esa URL. Ya con el token vivo, quedan por resolver: stage IDs de credit-limit y la lista `do_not_email` de email. La **Developer API Key** que pasó el cliente quedó **sin uso** (este camino no la necesita). Postgres (sales-bot) sigue placeholder.
 
+> [!success] Tango 2026-06-12 — acceso resuelto (SQL Server read-only)
+> El cliente dio acceso (TeamViewer) al servidor on-prem de Tango. **Tango es LOCAL sobre SQL Server 2019** → se integra por SQL directo, no por CSV/RPA (mejor de lo temido). Hecho: base productiva identificada (`BLINCER_SRL`, Tango Gestión), **2 vistas read-only** (`vw_blincer_clientes_cc` para credit-limit, `vw_blincer_facturas_pendientes` para cobranzas) y **usuario de solo-lectura `blincer_n8n_ro`** con SELECT solo a esas vistas (verificado mínimo privilegio). **Falta:** túnel (Tailscale) PC→VPS + credencial Microsoft SQL en n8n + reemplazar los nodos Tango `disabled` de credit-limit y whatsapp-overdue. Detalle completo: [[n8n/clients/blincer/tango-integration|Tango integration]]. Credenciales: `accesos.md`.
+
 ## Backing stores — Google Sheets (2026-06-02)
 
 Un spreadsheet por flow (dueño `borgonifrancisco@gmail.com`, compartidos *anyone-with-link = editor* según convención del cliente). Las columnas creadas son las que el **skeleton realmente usa** — más magras que los `plan.md` (las tabs `*_errors` y `*_metrics` y varias columnas extra del plan **todavía no se crearon**).
@@ -78,7 +82,8 @@ Un spreadsheet por flow (dueño `borgonifrancisco@gmail.com`, compartidos *anyon
 
 ## Open dependencies
 
-- [ ] Confirm Tango version (local vs Nexo) — bloquea plan de 3 flows
+- [x] Confirm Tango version (local vs Nexo) — **LOCAL** (SQL Server 2019). Acceso por SQL read-only, ver [[n8n/clients/blincer/tango-integration|Tango integration]]
+- [ ] Confirmar decisiones de cobranza Tango (canal email/WhatsApp · saldo mínimo · antigüedad máx) — ver [[n8n/clients/blincer/tango-integration|Tango integration]]
 - [ ] Confirm WhatsApp provider final (Evolution API vs Cloud API oficial) — bloquea plan de 2 flows
 - [ ] Confirm HubSpot edition exacto + scopes API disponibles
 - [ ] Decidir LLM provider y budget para sales-bot
@@ -86,8 +91,8 @@ Un spreadsheet por flow (dueño `borgonifrancisco@gmail.com`, compartidos *anyon
 - [ ] Source of truth del catálogo + stock para sales-bot
 - [ ] Política de aprobación humana antes de emitir cotización/factura
 - [ ] Canal de alerta interno (Sandra/Guillermo) — WhatsApp interno, email o Slack/Teams
-- [ ] Get list of accesses / credentials from client
-- [ ] Decide secrets vault
+- [~] Get list of accesses / credentials from client — Tango (app + SQL + server) en `accesos.md`; faltan TeamViewer ID/clave y acceso al VPS
+- [ ] Decide secrets vault — interino `accesos.md`; migrar a Bitwarden/Doppler antes de Fase 1
 
 ## Links
 

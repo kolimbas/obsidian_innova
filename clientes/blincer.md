@@ -35,13 +35,13 @@ Sandra se jubila este año — hay que capturar su conocimiento y automatizar su
 
 ## Stack del cliente
 
-- **Tango Gestión** (versión a confirmar — local o Nexo)
+- **Tango Gestión LOCAL** (servidor on-prem `BLI-SVRV-TANGO`, SQL Server 2019, base `BLINCER_SRL`) — confirmado 2026-06-12
 - Bancos: Galicia · BBVA · Cooperativa
 - Gmail · Google Drive · Google Sheets
 - Mailchimp · Metricool · Google Ads
 
-> [!warning] Riesgo crítico
-> Si Tango es versión local (sin API), toda la integración va por CSV/RPA — más frágil y más horas. **Confirmar en Fase 0 como prioridad #1.** Plantear migración a Tango Nexo en la primera reunión.
+> [!success] Riesgo Tango RESUELTO (2026-06-12)
+> Tango es local **pero** sobre SQL Server → se integra por **consultas SQL de solo-lectura** (directo, robusto), NO por CSV/RPA como se temía. No hace falta migrar a Nexo. Ya hay 2 vistas read-only + usuario de solo-lectura creados. Detalle: [[n8n/clients/blincer/tango-integration|Tango integration]] · accesos en `accesos.md`.
 
 ---
 
@@ -110,8 +110,8 @@ Coordinación inter-áreas · Criterio contable · Relación con socios y Estudi
 > - [ ] Definir precio por fase (deliverable, no por hora)
 > - [ ] Armar estimate en QuickBooks — Opción A (fases aprobables independientemente)
 > - [ ] Preparar agenda para la visita a la fábrica
-> - [ ] Confirmar versión de Tango (local vs Nexo) — plantear migración
-> - [ ] Lista de credenciales/accesos a pedir al cliente
+> - [x] Confirmar versión de Tango (local vs Nexo) → **LOCAL/SQL Server**, integración por SQL read-only (sin migrar a Nexo) — ver [[n8n/clients/blincer/tango-integration|Tango integration]]
+> - [~] Lista de credenciales/accesos a pedir al cliente → Tango/SQL/server ya en `accesos.md`; faltan TeamViewer y VPS
 > - [ ] Arrancar entrevistas con Sandra lo antes posible (no esperar a Fase 0)
 
 ---
@@ -120,7 +120,7 @@ Coordinación inter-áreas · Criterio contable · Relación con socios y Estudi
 
 | Riesgo | Impacto | Mitigación |
 | --- | --- | --- |
-| Tango local sin API | Alto | Confirmar en visita, plantear Nexo, calcular con buffer si es RPA |
+| ~~Tango local sin API~~ → **RESUELTO** | ~~Alto~~ Bajo | Es local pero sobre SQL Server → SQL read-only (sin RPA). 2 vistas + usuario `blincer_n8n_ro` creados 2026-06-12 |
 | Sandra como único knowledge holder | Alto | Empezar entrevistas YA, antes de la visita formal |
 | Producción sin sistema digital | Medio | Ver en visita antes de pricear C1 |
 | Resistencia al cambio del equipo | Medio | Capacitación bien estructurada en Fase 4 |
